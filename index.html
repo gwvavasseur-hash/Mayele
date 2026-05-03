@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Mayele</title>
+
+  <style>
+    :root {
+      --bg: #fff7f3;
+      --card: rgba(255, 255, 255, 0.82);
+      --text: #3b2427;
+      --muted: #7f5f64;
+      --pink: #ff7fa3;
+      --pink-dark: #e95f88;
+      --danger: #d40000;
+      --danger-dark: #8f0000;
+      --shadow: 0 20px 60px rgba(130, 60, 85, 0.16);
+      --radius: 30px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255, 135, 180, 0.36), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(255, 210, 135, 0.34), transparent 36%),
+        linear-gradient(135deg, #fff7f3, #fff0f7);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font-family: inherit;
+      font-size: 16px;
+    }
+
+    button {
+      touch-action: manipulation;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid rgba(233, 95, 136, 0.22);
+      background: #fff;
+      color: var(--text);
+      border-radius: 18px;
+      padding: 15px 16px;
+      outline: none;
+      -webkit-user-select: text;
+      user-select: text;
+      position: relative;
+      z-index: 5;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    textarea {
+      min-height: 112px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 4px rgba(255, 127, 163, 0.14);
+    }
+
+    .lock-screen {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+    }
+
+    .lock-card {
+      width: min(470px, 100%);
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 34px;
+      box-shadow: var(--shadow);
+      padding: 34px;
+      text-align: center;
+      backdrop-filter: blur(18px);
+    }
+
+    .lock-title {
+      font-size: clamp(2.6rem, 12vw, 5rem);
+      line-height: 0.95;
+      letter-spacing: -0.07em;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, var(--text), #ff6f9a, var(--text));
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: gradientMove 5s ease-in-out infinite;
+    }
+
+    .lock-card p {
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .access-form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .app {
+      display: none;
+    }
+
+    .app.unlocked {
+      display: block;
+    }
+
+    .page {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 12px;
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px;
+      margin-bottom: 18px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      border-radius: 999px;
+      box-shadow: 0 14px 40px rgba(130, 60, 85, 0.16);
+      backdrop-filter: blur(18px);
+    }
+
+    .tab-btn {
+      border: none;
+      cursor: pointer;
+      color: var(--pink-dark);
+      background: transparent;
+      padding: 12px 14px;
+      border-radius: 999px;
+      font-weight: 850;
+      font-size: 0.88rem;
+      white-space: nowrap;
+      transition: 0.22s ease;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 127, 163, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .tab-btn.active {
+      background: var(--pink);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(255, 127, 163, 0.32);
+    }
+
+    .view {
+      display: none;
+      animation: viewIn 0.35s ease both;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    @keyframes viewIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero {
+      min-height: calc(100vh - 100px);
+      min-height: calc(100dvh - 100px);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 22px 0 36px;
+    }
+
+    .hero-card {
+      width: 100%;
+      min-height: 620px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: clamp(34px, 8vw, 84px);
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.86);
+      border-radius: 38px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 4;
+    }
+
+    .label {
+      display: inline-block;
+      margin-bottom: 22px;
+      padding: 9px 16px;
+      background: rgba(255, 127, 163, 0.14);
+      color: var(--pink-dark);
+      border-radius: 999px;
+      font-weight: 850;
+      font-size: 0.9rem;
+      animation: softBounce 2.8s ease-in-out infinite;
+    }
+
+    @keyframes softBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    h1 {
+      font-size: clamp(4.4rem, 17vw, 11rem);
+      line-height: 0.86;
+      letter-spacing: -0.09em;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, var(--text), #ff6f9a, var(--text));
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: gradientMove 5s ease-in-out infinite;
+    }
+
+    @keyframes gradientMove {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .hero-card p {
+      max-width: 720px;
+      margin: 0 auto 28px;
+      color: var(--muted);
+      font-size: clamp(1.02rem, 2.3vw, 1.3rem);
+    }
+
+    .floating-word {
+      position: absolute;
+      z-index: 2;
+      padding: 10px 15px;
+      background: rgba(255, 255, 255, 0.66);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: 999px;
+      color: var(--pink-dark);
+      font-weight: 850;
+      box-shadow: 0 14px 28px rgba(130, 60, 85, 0.12);
+      animation: drift 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .word-1 { top: 16%; left: 8%; }
+    .word-2 { top: 22%; right: 8%; animation-delay: -1.5s; }
+    .word-3 { bottom: 18%; left: 10%; animation-delay: -3s; }
+    .word-4 { bottom: 15%; right: 10%; animation-delay: -4.5s; }
+
+    @keyframes drift {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-18px) rotate(3deg); }
+    }
+
+    .countdown-card {
+      margin: 28px auto 0;
+      width: min(620px, 100%);
+      background:
+        radial-gradient(circle at top left, rgba(255, 0, 0, 0.2), transparent 35%),
+        linear-gradient(135deg, rgba(255, 235, 235, 0.96), rgba(255, 255, 255, 0.9));
+      border: 1px solid rgba(210, 0, 0, 0.24);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 0 18px 45px rgba(160, 0, 0, 0.16);
+    }
+
+    .countdown-label {
+      margin: 0 0 10px !important;
+      color: var(--danger-dark) !important;
+      font-weight: 950;
+      font-size: clamp(1rem, 3vw, 1.25rem) !important;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+
+    .countdown-timer {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .time-box {
+      background: #fff;
+      border-radius: 18px;
+      padding: 12px 8px;
+      border: 1px solid rgba(180, 0, 0, 0.18);
+      box-shadow: 0 10px 24px rgba(180, 0, 0, 0.08);
+    }
+
+    .time-number {
+      display: block;
+      font-size: clamp(1.3rem, 5vw, 2rem);
+      font-weight: 950;
+      color: var(--danger);
+      line-height: 1;
+    }
+
+    .time-label {
+      display: block;
+      margin-top: 5px;
+      font-size: 0.76rem;
+      font-weight: 850;
+      color: var(--danger-dark);
+    }
+
+    .countdown-detail {
+      margin: 8px 0 0 !important;
+      color: var(--danger-dark) !important;
+      font-size: 0.95rem !important;
+      font-weight: 850;
+    }
+
+    .hero-actions,
+    .buttons-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      min-height: 48px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 14px 20px;
+      font-weight: 850;
+      font-size: 0.95rem;
+      transition: 0.22s ease;
+    }
+
+    .btn:hover { transform: translateY(-3px); }
+    .btn:active { transform: scale(0.96); }
+
+    .primary {
+      background: var(--pink);
+      color: white;
+      box-shadow: 0 12px 25px rgba(255, 127, 163, 0.34);
+    }
+
+    .secondary {
+      background: white;
+      color: var(--pink-dark);
+      border: 1px solid rgba(233, 95, 136, 0.16);
+    }
+
+    .dark {
+      background: var(--text);
+      color: white;
+    }
+
+    .danger {
+      background: #fff0f0;
+      color: #c93c3c;
+      border: 1px solid rgba(201, 60, 60, 0.14);
+    }
+
+    section.panel {
+      margin: 24px 0;
+      padding: clamp(24px, 5vw, 44px);
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      margin-bottom: 12px;
+    }
+
+    .intro {
+      max-width: 760px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .card,
+    .gift-card,
+    .plan-card {
+      background: white;
+      border-radius: 26px;
+      padding: 24px;
+      border: 1px solid rgba(233, 95, 136, 0.12);
+      box-shadow: 0 12px 28px rgba(130, 60, 85, 0.08);
+    }
+
+    .card {
+      min-height: 230px;
+      transition: 0.25s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card .emoji {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+
+    .card h3,
+    .plan-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+    }
+
+    .card p,
+    .plan-card p,
+    .gift-card p,
+    .moment p {
+      color: var(--muted);
+    }
+
+    .charged {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.84), rgba(255, 240, 247, 0.92)),
+        radial-gradient(circle at top right, rgba(255, 127, 163, 0.36), transparent 38%);
+    }
+
+    .gift-zone {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .big-gift {
+      font-size: clamp(5rem, 15vw, 9rem);
+      text-align: center;
+      margin: 20px 0;
+      animation: giftMove 3.2s ease-in-out infinite;
+    }
+
+    @keyframes giftMove {
+      0%, 100% { transform: rotate(-2deg) scale(1); }
+      50% { transform: rotate(2deg) scale(1.05); }
+    }
+
+    .dragibus {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .candy {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      box-shadow: inset -5px -6px 10px rgba(0,0,0,0.14), 0 8px 14px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: 0.18s ease;
+      border: 2px solid rgba(255,255,255,0.65);
+    }
+
+    .candy:hover {
+      transform: scale(1.18) rotate(8deg);
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 22px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 8px;
+      width: 3px;
+      height: calc(100% - 16px);
+      border-radius: 999px;
+      background: linear-gradient(var(--pink), #ffd18a);
+    }
+
+    .moment {
+      background: white;
+      border-radius: 22px;
+      padding: 20px;
+      border: 1px solid rgba(233, 95, 136, 0.12);
+      position: relative;
+      transition: 0.22s ease;
+    }
+
+    .moment:hover {
+      transform: translateX(6px);
+    }
+
+    .moment::before {
+      content: "";
+      position: absolute;
+      left: -23px;
+      top: 25px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--pink);
+      border: 4px solid var(--bg);
+    }
+
+    .date-label,
+    .badge {
+      display: inline-flex;
+      margin-bottom: 8px;
+      font-size: 0.82rem;
+      font-weight: 850;
+      color: var(--pink-dark);
+      background: rgba(255, 127, 163, 0.12);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+
+    .history-actions,
+    .plan-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .history-action-btn,
+    .small-btn {
+      min-height: auto;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+    }
+
+    .letter {
+      background: #fffdf8;
+      border-radius: 24px;
+      padding: clamp(24px, 5vw, 38px);
+      border: 1px solid rgba(120, 60, 80, 0.1);
+      font-family: Georgia, serif;
+      font-size: 1.1rem;
+      color: #4b3034;
+    }
+
+    .letter p + p {
+      margin-top: 16px;
+    }
+
+    .add-box,
+    .planner-form {
+      background: white;
+      border-radius: 26px;
+      padding: 22px;
+      border: 1px solid rgba(233, 95, 136, 0.12);
+      margin-top: 18px;
+      display: none;
+    }
+
+    .add-box.show,
+    .planner-form.show {
+      display: block;
+      animation: viewIn 0.25s ease both;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .form-full {
+      grid-column: 1 / -1;
+    }
+
+    .planner-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .plan-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .done {
+      opacity: 0.62;
+    }
+
+    .done h3 {
+      text-decoration: line-through;
+    }
+
+    .empty-state {
+      background: rgba(255,255,255,0.72);
+      border: 1px dashed rgba(233, 95, 136, 0.3);
+      color: var(--muted);
+      border-radius: 24px;
+      padding: 22px;
+      text-align: center;
+      margin-top: 18px;
+    }
+
+    .game {
+      background: white;
+      border-radius: 28px;
+      padding: clamp(22px, 5vw, 34px);
+      border: 1px solid rgba(233, 95, 136, 0.12);
+      box-shadow: 0 18px 45px rgba(130, 60, 85, 0.12);
+    }
+
+    .question-card {
+      min-height: 170px;
+      background:
+        radial-gradient(circle at top left, rgba(255, 127, 163, 0.14), transparent 34%),
+        #fff8fb;
+      border-radius: 24px;
+      padding: 26px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 18px;
+      border: 1px solid rgba(233, 95, 136, 0.1);
+    }
+
+    .question {
+      font-size: clamp(1.35rem, 4vw, 2rem);
+      font-weight: 900;
+      letter-spacing: -0.035em;
+      line-height: 1.15;
+    }
+
+    .question-meta {
+      color: var(--muted);
+      margin: 12px 0 0;
+      font-weight: 700;
+    }
+
+    .progress {
+      height: 10px;
+      background: rgba(255, 127, 163, 0.16);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 3.3%;
+      background: linear-gradient(90deg, var(--pink), #ffd18a);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .pulse {
+      animation: pulse 0.34s ease;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+
+    .heart {
+      position: fixed;
+      bottom: -40px;
+      font-size: 22px;
+      animation: floatUp 6s linear forwards;
+      pointer-events: none;
+      z-index: 99;
+    }
+
+    @keyframes floatUp {
+      from { transform: translateY(0) scale(1); opacity: 0.9; }
+      to { transform: translateY(-105vh) scale(1.8); opacity: 0; }
+    }
+
+    .falling-candy {
+      position: fixed;
+      top: -60px;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      z-index: 100;
+      pointer-events: none;
+      box-shadow: inset -5px -6px 10px rgba(0,0,0,0.16), 0 10px 18px rgba(0,0,0,0.12);
+      border: 2px solid rgba(255,255,255,0.65);
+      animation: candyFall linear forwards;
+    }
+
+    @keyframes candyFall {
+      from { transform: translateY(-80px) rotate(0deg); }
+      to { transform: translateY(calc(100vh + 120px)) rotate(720deg); }
+    }
+
+    .explosion-piece {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      z-index: 300;
+      pointer-events: none;
+      font-size: 32px;
+      animation: explode 1.4s ease-out forwards;
+    }
+
+    @keyframes explode {
+      0% {
+        transform: translate(-50%, -50%) scale(0.2) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.8) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--text);
+      color: white;
+      padding: 13px 18px;
+      border-radius: 999px;
+      font-weight: 800;
+      box-shadow: 0 15px 35px rgba(59, 36, 39, 0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.25s ease;
+      z-index: 400;
+      text-align: center;
+      max-width: calc(100vw - 28px);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    footer {
+      text-align: center;
+      padding: 44px 10px 70px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        padding: 12px;
+      }
+
+      .topbar {
+        overflow-x: auto;
+        justify-content: flex-start;
+        border-radius: 24px;
+        top: 8px;
+      }
+
+      .topbar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .hero-card {
+        min-height: 560px;
+        border-radius: 30px;
+        padding: 34px 20px;
+      }
+
+      .floating-word {
+        font-size: 0.78rem;
+        padding: 8px 11px;
+      }
+
+      .word-1 { top: 12%; left: 5%; }
+      .word-2 { top: 14%; right: 5%; }
+      .word-3 { bottom: 8%; left: 5%; }
+      .word-4 { bottom: 6%; right: 5%; }
+
+      .grid,
+      .gift-zone,
+      .planner-grid,
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-full {
+        grid-column: auto;
+      }
+
+      .hero-actions,
+      .buttons-row {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .plan-top {
+        flex-direction: column;
+      }
+
+      .countdown-timer {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      section.panel {
+        margin: 18px 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="lock-screen" id="lockScreen">
+    <div class="lock-card">
+      <div class="lock-title">Espace privé</div>
+      <p>Entre le code d’accès pour ouvrir votre site.</p>
+
+      <form class="access-form" id="accessForm">
+        <input
+          id="accessInput"
+          type="text"
+          placeholder="Code d’accès"
+          autocomplete="off"
+          autocapitalize="none"
+          spellcheck="false"
+          enterkeyhint="go"
+          required
+        />
+        <button class="btn primary" type="submit">Entrer</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="app" id="app">
+    <div class="page">
+      <nav class="topbar">
+        <button class="tab-btn active" type="button" data-view="accueil">Accueil</button>
+        <button class="tab-btn" type="button" data-view="amour">Pourquoi je t’aime</button>
+        <button class="tab-btn" type="button" data-view="histoire">Notre histoire</button>
+        <button class="tab-btn" type="button" data-view="organisation">Organisation</button>
+        <button class="tab-btn" type="button" data-view="questions">Questions</button>
+      </nav>
+
+      <main>
+        <div class="view active" id="accueil">
+          <div class="hero">
+            <div class="hero-card">
+              <span class="floating-word word-1">Dragibus 🍬</span>
+              <span class="floating-word word-2">Cheval 🐴</span>
+              <span class="floating-word word-3">Nantes 🎶</span>
+              <span class="floating-word word-4">Nous deux 💗</span>
+
+              <div class="hero-inner">
+                <div class="label">Votre petit espace à deux</div>
+                <h1>Mayele</h1>
+
+                <p>
+                  Un site pour garder vos souvenirs, organiser vos idées, prévoir vos sorties,
+                  et avoir un petit endroit rien qu’à vous deux.
+                </p>
+
+                <div class="hero-actions">
+                  <button class="btn primary" type="button" data-go="histoire">Ajouter un souvenir</button>
+                  <button class="btn secondary" type="button" data-go="organisation">Organiser une sortie</button>
+                  <button class="btn secondary" type="button" data-go="questions">Faire les questions</button>
+                </div>
+
+                <div class="countdown-card">
+                  <p class="countdown-label">Rends-moi mon doudou et mon maillot</p>
+
+                  <div class="countdown-timer">
+                    <div class="time-box">
+                      <span class="time-number" id="days">00</span>
+                      <span class="time-label">jours</span>
+                    </div>
+                    <div class="time-box">
+                      <span class="time-number" id="hours">00</span>
+                      <span class="time-label">heures</span>
+                    </div>
+                    <div class="time-box">
+                      <span class="time-number" id="minutes">00</span>
+                      <span class="time-label">minutes</span>
+                    </div>
+                    <div class="time-box">
+                      <span class="time-number" id="seconds">00</span>
+                      <span class="time-label">secondes</span>
+                    </div>
+                  </div>
+
+                  <p class="countdown-detail" id="countdownDetail">
+                    Deadline : lundi soir à 23h59. Après, ça explose.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="view" id="amour">
+          <section class="panel">
+            <h2>Pourquoi je t’aime</h2>
+            <p class="intro">Quelques raisons évidentes. Clique sur les cartes, elles réagissent.</p>
+
+            <div class="grid">
+              <div class="card" data-message="Elle est trop forte à cheval 🐴">
+                <div class="emoji">🐴</div>
+                <h3>Parce que tu es trop forte à cheval</h3>
+                <p>Il y a quelque chose de beau dans la façon dont tu es avec les chevaux. C’est vraiment ton univers.</p>
+              </div>
+
+              <div class="card" data-message="Beauté confirmée ✨">
+                <div class="emoji">✨</div>
+                <h3>Parce que t’es belle</h3>
+                <p>Belle dans ta façon d’être, dans ton sourire, dans ta présence. Une beauté qui reste dans la tête.</p>
+              </div>
+
+              <div class="card" data-message="Dragibus validés 🍬">
+                <div class="emoji">🍬</div>
+                <h3>Parce que tu adores les Dragibus</h3>
+                <p>Un site pour Mayele sans Dragibus, ce serait clairement incomplet.</p>
+              </div>
+
+              <div class="card charged" data-message="Catégorie incroyable débloquée 💅">
+                <div class="emoji">💅</div>
+                <h3>Parce que t’es chargée</h3>
+                <p>Catégorie spéciale. Pas besoin d’explication longue : c’est juste une évidence.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h2>Des petits cadeaux</h2>
+            <p class="intro">Clique sur un Dragibus : il déclenche une avalanche de bonbons de la même couleur.</p>
+
+            <div class="gift-zone">
+              <div class="gift-card">
+                <h3>Un bouquet pour toi</h3>
+                <div class="big-gift">💐</div>
+                <p>Même si ce n’est qu’un bouquet sur un site, l’intention derrière est vraie.</p>
+              </div>
+
+              <div class="gift-card">
+                <h3>Le paquet de Dragibus officiel</h3>
+                <p>Choisis une couleur, et regarde l’avalanche.</p>
+
+                <div class="dragibus">
+                  <div class="candy" data-color="#ff4f8b" style="background:#ff4f8b;"></div>
+                  <div class="candy" data-color="#ffe15c" style="background:#ffe15c;"></div>
+                  <div class="candy" data-color="#49d17d" style="background:#49d17d;"></div>
+                  <div class="candy" data-color="#6f7cff" style="background:#6f7cff;"></div>
+                  <div class="candy" data-color="#111111" style="background:#111111;"></div>
+                  <div class="candy" data-color="#ff8b2c" style="background:#ff8b2c;"></div>
+                  <div class="candy" data-color="#f5f5f5" style="background:#f5f5f5;"></div>
+                  <div class="candy" data-color="#b76cff" style="background:#b76cff;"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="view" id="histoire">
+          <section class="panel">
+            <h2>Notre histoire</h2>
+            <p class="intro">
+              Les souvenirs sont classés automatiquement par date. Tu peux en ajouter, les modifier ou les supprimer.
+            </p>
+
+            <div class="buttons-row" style="justify-content:flex-start; margin-bottom:18px;">
+              <button class="btn primary" type="button" id="toggleEventFormBtn">+ Ajouter un événement</button>
+            </div>
+
+            <div class="add-box" id="eventFormBox">
+              <form id="eventForm">
+                <div class="form-grid">
+                  <input id="eventDate" type="text" inputmode="numeric" placeholder="Date : JJ/MM/AAAA" required />
+                  <input id="eventTitle" type="text" placeholder="Titre du souvenir" required />
+                  <textarea id="eventText" class="form-full" placeholder="Raconte ce moment..." required></textarea>
+                </div>
+
+                <div class="buttons-row" style="justify-content:flex-start;">
+                  <button class="btn primary" type="submit" id="saveEventBtn">Ajouter à notre histoire</button>
+                  <button class="btn secondary" type="button" id="closeEventFormBtn">Fermer</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="timeline" id="timeline"></div>
+          </section>
+
+          <section class="panel">
+            <h2>Une lettre pour toi</h2>
+            <div class="letter">
+              <p>Mayele,</p>
+              <p>Je voulais te faire quelque chose de différent. Pas juste un message, mais un petit endroit à toi.</p>
+              <p>J’aime ta façon d’être, ta beauté, ton énergie, ton univers avec les chevaux, tes petits goûts comme les Dragibus, et tous les moments qu’on a déjà vécus ensemble.</p>
+              <p>De la Fête de la Musique à Nantes jusqu’aux moments plus simples, tout ça fait partie de notre histoire.</p>
+              <p>Et ce site, c’est juste une façon de te dire que je suis heureux de t’avoir dans ma vie.</p>
+            </div>
+          </section>
+        </div>
+
+        <div class="view" id="organisation">
+          <section class="panel">
+            <h2>Organisation</h2>
+            <p class="intro">
+              Ici, vous pouvez noter vos idées de sorties, vos dates à prévoir, vos vacances d’été,
+              vos envies random, ou les choses à faire ensemble.
+            </p>
+
+            <div class="buttons-row" style="justify-content:flex-start;">
+              <button class="btn primary" type="button" id="togglePlanFormBtn">+ Ajouter une idée</button>
+              <button class="btn secondary" type="button" id="randomPlanBtn">Idée surprise</button>
+            </div>
+
+            <div class="planner-form" id="planFormBox">
+              <form id="planForm">
+                <div class="form-grid">
+                  <input id="planTitle" type="text" placeholder="Ex : Pique-nique, vacances d’été..." required />
+
+                  <select id="planCategory">
+                    <option value="Sortie">Sortie</option>
+                    <option value="Date">Date</option>
+                    <option value="Vacances">Vacances</option>
+                    <option value="Idée random">Idée random</option>
+                    <option value="À faire">À faire</option>
+                  </select>
+
+                  <input id="planDate" type="text" inputmode="numeric" placeholder="Date : JJ/MM/AAAA" />
+                  <input id="planPlace" type="text" placeholder="Lieu, si vous savez déjà" />
+                  <textarea id="planNote" class="form-full" placeholder="Notes, détails, envies, budget, horaires..."></textarea>
+                </div>
+
+                <div class="buttons-row" style="justify-content:flex-start;">
+                  <button class="btn primary" type="submit">Ajouter à l’organisation</button>
+                  <button class="btn secondary" type="button" id="closePlanFormBtn">Fermer</button>
+                </div>
+              </form>
+            </div>
+
+            <div id="plannerList" class="planner-grid"></div>
+
+            <div id="plannerEmpty" class="empty-state">
+              Aucune idée pour l’instant. Ajoutez une sortie, une date ou une idée de vacances.
+            </div>
+          </section>
+        </div>
+
+        <div class="view" id="questions">
+          <section class="panel">
+            <h2>Questions à deux</h2>
+            <p class="intro">Les questions avancent dans l’ordre.</p>
+
+            <div class="game">
+              <div class="question-card" id="questionCard">
+                <p class="question" id="questionText"></p>
+              </div>
+
+              <div class="buttons-row">
+                <button class="btn secondary" type="button" id="previousQuestionBtn">Question précédente</button>
+                <button class="btn primary" type="button" id="nextQuestionBtn">Question suivante</button>
+                <button class="btn dark" type="button" id="surpriseQuestionBtn">Question surprise</button>
+              </div>
+
+              <p class="question-meta" id="questionMeta"></p>
+
+              <div class="progress">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <footer>Fait avec amour pour Mayele ♡</footer>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Action validée</div>
+
+  <script>
+    var ACCESS_CODE = "gwileplusbeau";
+    var currentQuestionIndex = 0;
+    var countdownExploded = false;
+    var editingEventId = null;
+
+    var memoryBackup = {
+      mayele_history_v3: null,
+      mayele_plans_v3: null
+    };
+
+    var deadline = new Date("2026-05-04T23:59:00+02:00").getTime();
+
+    var defaultEvents = [
+      {
+        id: "default-1",
+        date: "2025-06-21",
+        title: "Notre premier date — la Fête de la Musique à Nantes",
+        text: "C’est là que tout a commencé. Un moment simple, vivant, avec la musique, Nantes, et surtout toi."
+      },
+      {
+        id: "default-2",
+        date: "2025-09-02",
+        title: "Le début de l’année scolaire",
+        text: "Petit à petit, on s’est rapprochés, puis on s’est mis ensemble."
+      },
+      {
+        id: "default-3",
+        date: "2025-10-01",
+        title: "Les sorties et les soirées",
+        text: "Des moments dehors, des soirées, des souvenirs qui se construisent sans forcément qu’on s’en rende compte."
+      },
+      {
+        id: "default-4",
+        date: "2025-11-01",
+        title: "Quand tu es venue chez moi",
+        text: "Ces moments-là comptent aussi. Être ensemble dans un endroit plus calme, c’est différent."
+      },
+      {
+        id: "default-5",
+        date: "2025-12-01",
+        title: "Le train",
+        text: "La distance est là, mais il y a aussi les trajets, les retrouvailles, et ces moments qui font partie de l’histoire."
+      }
+    ];
+
+    var questions = [
+      "Quelle est la première chose que tu as remarquée chez moi ?",
+      "C’est quoi ton souvenir préféré avec moi ?",
+      "Si on partait quelque part demain, tu voudrais aller où ?",
+      "C’est quoi ton film préféré de tous les temps ?",
+      "Quelle couleur me va le mieux selon toi ?",
+      "Si je devenais un animal, je serais quoi ? Attention à la réponse.",
+      "C’est quoi le truc le plus drôle que j’ai déjà fait ?",
+      "Tu préfères une soirée chill à deux ou une sortie imprévue ?",
+      "C’est quoi ton Dragibus préféré ? Oui, c’est une question sérieuse.",
+      "Quelle chanson te fait penser à nous ?",
+      "C’est quoi un endroit où tu voudrais qu’on aille ensemble ?",
+      "Quelle est ta plus grande green flag chez moi ?",
+      "Si on ouvrait un restaurant ensemble, on vendrait quoi ?",
+      "Quel souvenir de nous te fait sourire direct ?",
+      "C’est quoi une chose random que tu veux absolument faire un jour ?",
+      "Tu préfères qu’on parte à la mer, à la montagne ou dans une ville inconnue ?",
+      "Quel est le meilleur date qu’on pourrait faire sans dépenser beaucoup ?",
+      "C’est quoi ton plat préféré, mais vraiment, celui qui gagne toujours ?",
+      "Si on devait choisir une série à regarder ensemble, ce serait quoi ?",
+      "Quelle est la chose la plus mignonne que j’ai déjà dite ou faite ?",
+      "C’est quoi ton plus gros fou rire récent ?",
+      "Si tu pouvais téléporter quelqu’un maintenant, tu me téléporterais où ?",
+      "Quel est ton rêve un peu irréaliste mais trop bien ?",
+      "Si on avait un cheval ensemble, on l’appellerait comment ?",
+      "C’est quoi le meilleur bonbon Haribo selon toi ?",
+      "Quelle tenue tu préfères sur moi ?",
+      "C’est quoi une chose que tu veux qu’on fasse avant la fin de l’année ?",
+      "Quel emoji me représente le mieux ?",
+      "Si notre histoire avait un titre de film, ce serait quoi ?",
+      "Est-ce que tu m’aimes plus qu’un paquet de Dragibus ? Attention."
+    ];
+
+    function safeJSONGet(key, fallback) {
+      try {
+        var value = localStorage.getItem(key);
+        return value ? JSON.parse(value) : fallback;
+      } catch (error) {
+        if (memoryBackup[key] !== undefined && memoryBackup[key] !== null) {
+          return memoryBackup[key];
+        }
+        return fallback;
+      }
+    }
+
+    function safeJSONSet(key, value) {
+      memoryBackup[key] = value;
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (error) {}
+    }
+
+    function safeGet(key, fallback) {
+      try {
+        var value = localStorage.getItem(key);
+        return value === null ? fallback : value;
+      } catch (error) {
+        return fallback;
+      }
+    }
+
+    function safeSet(key, value) {
+      try {
+        localStorage.setItem(key, value);
+      } catch (error) {}
+    }
+
+    function unlockSite() {
+      document.getElementById("lockScreen").style.display = "none";
+      document.getElementById("app").classList.add("unlocked");
+      safeSet("mayele_access_v3", ACCESS_CODE);
+      showToast("Bienvenue Mayele");
+      createHeart();
+      updateCountdown();
+    }
+
+    function checkAccess() {
+      if (safeGet("mayele_access_v3", "") === ACCESS_CODE) {
+        unlockSite();
+      }
+    }
+
+    function openView(viewId) {
+      var views = document.querySelectorAll(".view");
+      var buttons = document.querySelectorAll(".tab-btn");
+
+      for (var i = 0; i < views.length; i++) {
+        views[i].classList.remove("active");
+      }
+
+      for (var j = 0; j < buttons.length; j++) {
+        buttons[j].classList.remove("active");
+        if (buttons[j].getAttribute("data-view") === viewId) {
+          buttons[j].classList.add("active");
+        }
+      }
+
+      document.getElementById(viewId).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      createHeart();
+    }
+
+    function normalizeDateInput(value) {
+      var raw = String(value || "").trim();
+      if (!raw) return "";
+
+      var isoMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (isoMatch) return raw;
+
+      var frMatch = raw.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);
+      if (!frMatch) return "";
+
+      var day = frMatch[1].padStart(2, "0");
+      var month = frMatch[2].padStart(2, "0");
+      var year = frMatch[3];
+      var date = new Date(year + "-" + month + "-" + day + "T12:00:00");
+
+      if (
+        isNaN(date.getTime()) ||
+        date.getFullYear() !== Number(year) ||
+        date.getMonth() + 1 !== Number(month) ||
+        date.getDate() !== Number(day)
+      ) {
+        return "";
+      }
+
+      return year + "-" + month + "-" + day;
+    }
+
+    function formatDate(dateValue) {
+      if (!dateValue) return "Date à préciser";
+      var date = new Date(dateValue + "T12:00:00");
+      return date.toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      });
+    }
+
+    function formatDateForInput(dateValue) {
+      if (!dateValue) return "";
+      var parts = dateValue.split("-");
+      if (parts.length !== 3) return "";
+      return parts[2] + "/" + parts[1] + "/" + parts[0];
+    }
+
+    function escapeHTML(text) {
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function getHistoryEvents() {
+      var saved = safeJSONGet("mayele_history_v3", null);
+      if (Array.isArray(saved)) return saved;
+
+      var initial = defaultEvents.slice();
+      safeJSONSet("mayele_history_v3", initial);
+      return initial;
+    }
+
+    function saveHistoryEvents(events) {
+      safeJSONSet("mayele_history_v3", events);
+    }
+
+    function renderTimeline() {
+      var timeline = document.getElementById("timeline");
+      var events = getHistoryEvents();
+
+      events.sort(function(a, b) {
+        return new Date(a.date) - new Date(b.date);
+      });
+
+      saveHistoryEvents(events);
+      timeline.innerHTML = "";
+
+      for (var i = 0; i < events.length; i++) {
+        var item = events[i];
+        var moment = document.createElement("div");
+        moment.className = "moment";
+
+        moment.innerHTML =
+          '<span class="date-label">' + formatDate(item.date) + "</span>" +
+          "<strong>" + escapeHTML(item.title) + "</strong>" +
+          "<p>" + escapeHTML(item.text) + "</p>" +
+          '<div class="history-actions">' +
+            '<button class="btn secondary history-action-btn" type="button" data-edit-event="' + item.id + '">Modifier</button>' +
+            '<button class="btn danger history-action-btn" type="button" data-delete-event="' + item.id + '">Supprimer</button>' +
+          "</div>";
+
+        timeline.appendChild(moment);
+      }
+
+      attachHistoryButtons();
+    }
+
+    function attachHistoryButtons() {
+      var deleteButtons = document.querySelectorAll("[data-delete-event]");
+      var editButtons = document.querySelectorAll("[data-edit-event]");
+
+      for (var i = 0; i < deleteButtons.length; i++) {
+        deleteButtons[i].addEventListener("click", function(e) {
+          e.stopPropagation();
+          var id = this.getAttribute("data-delete-event");
+          if (!confirm("Tu es sûr de vouloir supprimer ce souvenir ?")) return;
+
+          var events = getHistoryEvents().filter(function(item) {
+            return item.id !== id;
+          });
+
+          saveHistoryEvents(events);
+          renderTimeline();
+          showToast("Souvenir supprimé");
+        });
+      }
+
+      for (var j = 0; j < editButtons.length; j++) {
+        editButtons[j].addEventListener("click", function(e) {
+          e.stopPropagation();
+          startEditEvent(this.getAttribute("data-edit-event"));
+        });
+      }
+    }
+
+    function openEventForm() {
+      document.getElementById("eventFormBox").classList.add("show");
+    }
+
+    function closeEventForm() {
+      editingEventId = null;
+      document.getElementById("eventForm").reset();
+      document.getElementById("saveEventBtn").textContent = "Ajouter à notre histoire";
+      document.getElementById("eventFormBox").classList.remove("show");
+    }
+
+    function startEditEvent(id) {
+      var events = getHistoryEvents();
+      var eventItem = null;
+
+      for (var i = 0; i < events.length; i++) {
+        if (events[i].id === id) {
+          eventItem = events[i];
+          break;
+        }
+      }
+
+      if (!eventItem) {
+        showToast("Souvenir introuvable");
+        return;
+      }
+
+      editingEventId = id;
+      document.getElementById("eventDate").value = formatDateForInput(eventItem.date);
+      document.getElementById("eventTitle").value = eventItem.title;
+      document.getElementById("eventText").value = eventItem.text;
+      document.getElementById("saveEventBtn").textContent = "Modifier le souvenir";
+      openEventForm();
+
+      setTimeout(function() {
+        document.getElementById("eventTitle").focus();
+      }, 120);
+
+      showToast("Modification ouverte");
+    }
+
+    function addOrUpdateEvent(e) {
+      e.preventDefault();
+
+      var date = normalizeDateInput(document.getElementById("eventDate").value);
+      var title = document.getElementById("eventTitle").value.trim();
+      var text = document.getElementById("eventText").value.trim();
+
+      if (!date) {
+        showToast("Date invalide : écris JJ/MM/AAAA");
+        return;
+      }
+
+      if (!title || !text) {
+        showToast("Remplis tous les champs");
+        return;
+      }
+
+      var events = getHistoryEvents();
+
+      if (editingEventId) {
+        for (var i = 0; i < events.length; i++) {
+          if (events[i].id === editingEventId) {
+            events[i].date = date;
+            events[i].title = title;
+            events[i].text = text;
+          }
+        }
+        showToast("Souvenir modifié");
+      } else {
+        events.push({
+          id: "event-" + Date.now(),
+          date: date,
+          title: title,
+          text: text
+        });
+        showToast("Souvenir ajouté");
+      }
+
+      saveHistoryEvents(events);
+      renderTimeline();
+      closeEventForm();
+      createHeart();
+    }
+
+    function getPlans() {
+      return safeJSONGet("mayele_plans_v3", []);
+    }
+
+    function savePlans(plans) {
+      safeJSONSet("mayele_plans_v3", plans);
+    }
+
+    function addPlan(e) {
+      e.preventDefault();
+
+      var title = document.getElementById("planTitle").value.trim();
+      var category = document.getElementById("planCategory").value;
+      var rawDate = document.getElementById("planDate").value;
+      var date = rawDate.trim() ? normalizeDateInput(rawDate) : "";
+      var place = document.getElementById("planPlace").value.trim();
+      var note = document.getElementById("planNote").value.trim();
+
+      if (!title) {
+        showToast("Ajoute au moins un titre");
+        return;
+      }
+
+      if (rawDate.trim() && !date) {
+        showToast("Date invalide : écris JJ/MM/AAAA");
+        return;
+      }
+
+      var plans = getPlans();
+
+      plans.push({
+        id: "plan-" + Date.now(),
+        title: title,
+        category: category,
+        date: date,
+        place: place,
+        note: note,
+        done: false
+      });
+
+      savePlans(plans);
+      renderPlans();
+      document.getElementById("planForm").reset();
+      showToast("Idée ajoutée");
+      createHeart();
+    }
+
+    function addRandomPlan() {
+      var ideas = [
+        {
+          title: "Pique-nique quelque part à Nantes",
+          category: "Date",
+          place: "Nantes",
+          note: "Prévoir un plaid, des trucs à manger et des Dragibus."
+        },
+        {
+          title: "Soirée film + bonbons",
+          category: "Date",
+          place: "Chez nous",
+          note: "Chacun choisit un film, puis débat très sérieux."
+        },
+        {
+          title: "Planifier les vacances d’été",
+          category: "Vacances",
+          place: "À choisir",
+          note: "Regarder les dates, le budget et les destinations possibles."
+        },
+        {
+          title: "Balade + goûter",
+          category: "Sortie",
+          place: "À choisir",
+          note: "Simple, mais efficace."
+        }
+      ];
+
+      var idea = ideas[Math.floor(Math.random() * ideas.length)];
+      var plans = getPlans();
+
+      plans.push({
+        id: "plan-" + Date.now(),
+        title: idea.title,
+        category: idea.category,
+        date: "",
+        place: idea.place,
+        note: idea.note,
+        done: false
+      });
+
+      savePlans(plans);
+      renderPlans();
+      showToast("Idée surprise ajoutée");
+      createHeart();
+    }
+
+    function addPlanToHistory(id) {
+      var plans = getPlans();
+      var plan = null;
+
+      for (var i = 0; i < plans.length; i++) {
+        if (plans[i].id === id) {
+          plan = plans[i];
+          break;
+        }
+      }
+
+      if (!plan) {
+        showToast("Idée introuvable");
+        return;
+      }
+
+      if (!plan.date) {
+        showToast("Ajoute une date avant de mettre dans l’histoire");
+        return;
+      }
+
+      var text = "";
+      if (plan.place) text += "Lieu : " + plan.place + ". ";
+      if (plan.note) text += plan.note;
+      if (!text) text = "Une idée organisée ensemble, ajoutée à notre histoire.";
+
+      var events = getHistoryEvents();
+      events.push({
+        id: "event-from-plan-" + Date.now(),
+        date: plan.date,
+        title: plan.title,
+        text: text
+      });
+
+      saveHistoryEvents(events);
+      renderTimeline();
+      showToast("Ajouté à notre histoire");
+      createHeart();
+    }
+
+    function renderPlans() {
+      var list = document.getElementById("plannerList");
+      var empty = document.getElementById("plannerEmpty");
+      var plans = getPlans();
+
+      plans.sort(function(a, b) {
+        if (!a.date && !b.date) return 0;
+        if (!a.date) return 1;
+        if (!b.date) return -1;
+        return new Date(a.date) - new Date(b.date);
+      });
+
+      list.innerHTML = "";
+
+      if (plans.length === 0) {
+        empty.style.display = "block";
+        return;
+      }
+
+      empty.style.display = "none";
+
+      for (var i = 0; i < plans.length; i++) {
+        var plan = plans[i];
+        var card = document.createElement("div");
+        card.className = "plan-card" + (plan.done ? " done" : "");
+
+        card.innerHTML =
+          '<div class="plan-top">' +
+            "<div>" +
+              "<h3>" + escapeHTML(plan.title) + "</h3>" +
+              "<p>" +
+                (plan.date ? "📅 " + formatDate(plan.date) : "📅 Date à choisir") +
+                (plan.place ? "<br>📍 " + escapeHTML(plan.place) : "") +
+              "</p>" +
+            "</div>" +
+            '<span class="badge">' + escapeHTML(plan.category) + "</span>" +
+          "</div>" +
+          (plan.note ? "<p>" + escapeHTML(plan.note) + "</p>" : "") +
+          '<div class="plan-actions">' +
+            '<button class="btn primary small-btn" type="button" data-history-plan="' + plan.id + '">Ajouter à notre histoire</button>' +
+            '<button class="btn secondary small-btn" type="button" data-toggle-plan="' + plan.id + '">' +
+              (plan.done ? "Remettre à faire" : "Marquer comme fait") +
+            "</button>" +
+            '<button class="btn danger small-btn" type="button" data-delete-plan="' + plan.id + '">Supprimer</button>' +
+          "</div>";
+
+        list.appendChild(card);
+      }
+
+      attachPlanButtons();
+    }
+
+    function attachPlanButtons() {
+      var toggleButtons = document.querySelectorAll("[data-toggle-plan]");
+      var deleteButtons = document.querySelectorAll("[data-delete-plan]");
+      var historyButtons = document.querySelectorAll("[data-history-plan]");
+
+      for (var i = 0; i < toggleButtons.length; i++) {
+        toggleButtons[i].addEventListener("click", function() {
+          var id = this.getAttribute("data-toggle-plan");
+          var plans = getPlans();
+
+          for (var j = 0; j < plans.length; j++) {
+            if (plans[j].id === id) {
+              plans[j].done = !plans[j].done;
+            }
+          }
+
+          savePlans(plans);
+          renderPlans();
+          showToast("Statut modifié");
+        });
+      }
+
+      for (var k = 0; k < deleteButtons.length; k++) {
+        deleteButtons[k].addEventListener("click", function() {
+          var id = this.getAttribute("data-delete-plan");
+          if (!confirm("Tu veux vraiment supprimer cette idée ?")) return;
+
+          var plans = getPlans().filter(function(plan) {
+            return plan.id !== id;
+          });
+
+          savePlans(plans);
+          renderPlans();
+          showToast("Idée supprimée");
+        });
+      }
+
+      for (var l = 0; l < historyButtons.length; l++) {
+        historyButtons[l].addEventListener("click", function() {
+          addPlanToHistory(this.getAttribute("data-history-plan"));
+        });
+      }
+    }
+
+    function updateQuestion() {
+      var questionText = document.getElementById("questionText");
+      var questionMeta = document.getElementById("questionMeta");
+      var progressFill = document.getElementById("progressFill");
+      var questionCard = document.getElementById("questionCard");
+
+      questionText.textContent = questions[currentQuestionIndex];
+      questionMeta.textContent = "Question " + (currentQuestionIndex + 1) + " sur " + questions.length;
+
+      var progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+      progressFill.style.width = progress + "%";
+
+      questionCard.classList.remove("pulse");
+      void questionCard.offsetWidth;
+      questionCard.classList.add("pulse");
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex >= questions.length) {
+        currentQuestionIndex = 0;
+        showToast("On revient au début");
+      } else {
+        showToast("Question suivante");
+      }
+      updateQuestion();
+      createHeart();
+    }
+
+    function previousQuestion() {
+      currentQuestionIndex--;
+      if (currentQuestionIndex < 0) {
+        currentQuestionIndex = questions.length - 1;
+        showToast("Retour à la dernière question");
+      } else {
+        showToast("Question précédente");
+      }
+      updateQuestion();
+      createHeart();
+    }
+
+    function surpriseQuestion() {
+      var oldIndex = currentQuestionIndex;
+      while (currentQuestionIndex === oldIndex) {
+        currentQuestionIndex = Math.floor(Math.random() * questions.length);
+      }
+      showToast("Question surprise");
+      updateQuestion();
+      createHeart();
+    }
+
+    function updateCountdown() {
+      var now = new Date().getTime();
+      var distance = deadline - now;
+
+      var daysEl = document.getElementById("days");
+      var hoursEl = document.getElementById("hours");
+      var minutesEl = document.getElementById("minutes");
+      var secondsEl = document.getElementById("seconds");
+      var detailEl = document.getElementById("countdownDetail");
+
+      if (!daysEl || !hoursEl || !minutesEl || !secondsEl || !detailEl) return;
+
+      if (distance <= 0) {
+        daysEl.textContent = "00";
+        hoursEl.textContent = "00";
+        minutesEl.textContent = "00";
+        secondsEl.textContent = "00";
+        detailEl.textContent = "Trop tard. Le doudou et le maillot n’ont pas été rendus. BOUM.";
+
+        if (!countdownExploded) {
+          countdownExploded = true;
+          triggerExplosion();
+        }
+        return;
+      }
+
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+      var minutes = Math.floor((distance / (1000 * 60)) % 60);
+      var seconds = Math.floor((distance / 1000) % 60);
+
+      daysEl.textContent = String(days).padStart(2, "0");
+      hoursEl.textContent = String(hours).padStart(2, "0");
+      minutesEl.textContent = String(minutes).padStart(2, "0");
+      secondsEl.textContent = String(seconds).padStart(2, "0");
+      detailEl.textContent = "Deadline : lundi soir à 23h59. Après, ça explose.";
+    }
+
+    function triggerExplosion() {
+      showToast("BOUM bahaha");
+      var emojis = ["💥", "🧸", "👕", "💗", "🍬"];
+
+      for (var i = 0; i < 85; i++) {
+        setTimeout(function() {
+          var piece = document.createElement("div");
+          var x = Math.floor(Math.random() * 700 - 350) + "px";
+          var y = Math.floor(Math.random() * 700 - 350) + "px";
+
+          piece.className = "explosion-piece";
+          piece.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+          piece.style.setProperty("--x", x);
+          piece.style.setProperty("--y", y);
+
+          document.body.appendChild(piece);
+
+          setTimeout(function() {
+            piece.remove();
+          }, 1600);
+        }, i * 14);
+      }
+    }
+
+    function createHeart() {
+      var heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = "💗";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.fontSize = 18 + Math.random() * 16 + "px";
+
+      document.body.appendChild(heart);
+
+      setTimeout(function() {
+        heart.remove();
+      }, 6000);
+    }
+
+    function createCandyAvalanche(color) {
+      showToast("Avalanche de Dragibus");
+
+      for (var i = 0; i < 45; i++) {
+        setTimeout(function() {
+          var candy = document.createElement("div");
+          candy.className = "falling-candy";
+          candy.style.background = color;
+          candy.style.left = Math.random() * 100 + "vw";
+          candy.style.animationDuration = 2.2 + Math.random() * 2.3 + "s";
+          candy.style.width = 24 + Math.random() * 20 + "px";
+          candy.style.height = candy.style.width;
+
+          document.body.appendChild(candy);
+
+          setTimeout(function() {
+            candy.remove();
+          }, 5000);
+        }, i * 28);
+      }
+    }
+
+    function showToast(message) {
+      var toast = document.getElementById("toast");
+      if (!toast) return;
+
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(function() {
+        toast.classList.remove("show");
+      }, 1500);
+    }
+
+    function initSite() {
+      document.getElementById("accessForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        var accessInput = document.getElementById("accessInput");
+        var code = accessInput.value.trim().toLowerCase();
+
+        if (code === ACCESS_CODE) {
+          unlockSite();
+        } else {
+          accessInput.value = "";
+          accessInput.focus();
+          showToast("Code incorrect");
+        }
+      });
+
+      var tabButtons = document.querySelectorAll(".tab-btn");
+      for (var i = 0; i < tabButtons.length; i++) {
+        tabButtons[i].addEventListener("click", function() {
+          openView(this.getAttribute("data-view"));
+        });
+      }
+
+      var goButtons = document.querySelectorAll("[data-go]");
+      for (var j = 0; j < goButtons.length; j++) {
+        goButtons[j].addEventListener("click", function() {
+          openView(this.getAttribute("data-go"));
+        });
+      }
+
+      var cards = document.querySelectorAll(".card");
+      for (var k = 0; k < cards.length; k++) {
+        cards[k].addEventListener("click", function() {
+          this.classList.remove("pulse");
+          void this.offsetWidth;
+          this.classList.add("pulse");
+          showToast(this.getAttribute("data-message"));
+          createHeart();
+          createHeart();
+        });
+      }
+
+      var candies = document.querySelectorAll(".candy");
+      for (var l = 0; l < candies.length; l++) {
+        candies[l].addEventListener("click", function() {
+          createCandyAvalanche(this.getAttribute("data-color"));
+        });
+      }
+
+      document.getElementById("toggleEventFormBtn").addEventListener("click", function() {
+        editingEventId = null;
+        document.getElementById("eventForm").reset();
+        document.getElementById("saveEventBtn").textContent = "Ajouter à notre histoire";
+        document.getElementById("eventFormBox").classList.toggle("show");
+      });
+
+      document.getElementById("closeEventFormBtn").addEventListener("click", closeEventForm);
+      document.getElementById("eventForm").addEventListener("submit", addOrUpdateEvent);
+
+      document.getElementById("togglePlanFormBtn").addEventListener("click", function() {
+        document.getElementById("planFormBox").classList.toggle("show");
+      });
+
+      document.getElementById("closePlanFormBtn").addEventListener("click", function() {
+        document.getElementById("planFormBox").classList.remove("show");
+      });
+
+      document.getElementById("planForm").addEventListener("submit", addPlan);
+      document.getElementById("randomPlanBtn").addEventListener("click", addRandomPlan);
+
+      document.getElementById("previousQuestionBtn").addEventListener("click", previousQuestion);
+      document.getElementById("nextQuestionBtn").addEventListener("click", nextQuestion);
+      document.getElementById("surpriseQuestionBtn").addEventListener("click", surpriseQuestion);
+
+      renderTimeline();
+      renderPlans();
+      updateQuestion();
+      checkAccess();
+      updateCountdown();
+
+      setInterval(updateCountdown, 1000);
+
+      setInterval(function() {
+        if (Math.random() > 0.76) {
+          createHeart();
+        }
+      }, 2600);
+    }
+
+    document.addEventListener("DOMContentLoaded", initSite);
+  </script>
+</body>
+</html>
