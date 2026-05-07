@@ -8,15 +8,13 @@
   <style>
     :root {
       --bg: #fff7f3;
-      --card: rgba(255, 255, 255, 0.82);
+      --card: rgba(255, 255, 255, 0.84);
       --text: #3b2427;
       --muted: #7f5f64;
       --pink: #ff7fa3;
       --pink-dark: #e95f88;
-      --danger: #d40000;
-      --danger-dark: #8f0000;
+      --gold: #ffd18a;
       --shadow: 0 20px 60px rgba(130, 60, 85, 0.16);
-      --radius: 30px;
     }
 
     * {
@@ -59,15 +57,13 @@
     select {
       width: 100%;
       border: 1px solid rgba(233, 95, 136, 0.22);
-      background: #fff;
+      background: white;
       color: var(--text);
       border-radius: 18px;
       padding: 15px 16px;
       outline: none;
       -webkit-user-select: text;
       user-select: text;
-      position: relative;
-      z-index: 5;
       appearance: none;
       -webkit-appearance: none;
     }
@@ -177,7 +173,7 @@
 
     .tab-btn.active {
       background: var(--pink);
-      color: #fff;
+      color: white;
       box-shadow: 0 10px 22px rgba(255, 127, 163, 0.32);
     }
 
@@ -191,8 +187,25 @@
     }
 
     @keyframes viewIn {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes gradientMove {
+      0%, 100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
     }
 
     .hero {
@@ -236,8 +249,13 @@
     }
 
     @keyframes softBounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
+      0%, 100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-5px);
+      }
     }
 
     h1 {
@@ -251,11 +269,6 @@
       background-clip: text;
       color: transparent;
       animation: gradientMove 5s ease-in-out infinite;
-    }
-
-    @keyframes gradientMove {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
     }
 
     .hero-card p {
@@ -279,73 +292,37 @@
       pointer-events: none;
     }
 
-    .word-1 { top: 16%; left: 8%; }
-    .word-2 { top: 22%; right: 8%; animation-delay: -1.5s; }
-    .word-3 { bottom: 18%; left: 10%; animation-delay: -3s; }
-    .word-4 { bottom: 15%; right: 10%; animation-delay: -4.5s; }
+    .word-1 {
+      top: 16%;
+      left: 8%;
+    }
+
+    .word-2 {
+      top: 22%;
+      right: 8%;
+      animation-delay: -1.5s;
+    }
+
+    .word-3 {
+      bottom: 18%;
+      left: 10%;
+      animation-delay: -3s;
+    }
+
+    .word-4 {
+      bottom: 15%;
+      right: 10%;
+      animation-delay: -4.5s;
+    }
 
     @keyframes drift {
-      0%, 100% { transform: translateY(0) rotate(-2deg); }
-      50% { transform: translateY(-18px) rotate(3deg); }
-    }
+      0%, 100% {
+        transform: translateY(0) rotate(-2deg);
+      }
 
-    .countdown-card {
-      margin: 28px auto 0;
-      width: min(620px, 100%);
-      background:
-        radial-gradient(circle at top left, rgba(255, 0, 0, 0.2), transparent 35%),
-        linear-gradient(135deg, rgba(255, 235, 235, 0.96), rgba(255, 255, 255, 0.9));
-      border: 1px solid rgba(210, 0, 0, 0.24);
-      border-radius: 28px;
-      padding: 22px;
-      box-shadow: 0 18px 45px rgba(160, 0, 0, 0.16);
-    }
-
-    .countdown-label {
-      margin: 0 0 10px !important;
-      color: var(--danger-dark) !important;
-      font-weight: 950;
-      font-size: clamp(1rem, 3vw, 1.25rem) !important;
-      text-transform: uppercase;
-      letter-spacing: -0.02em;
-    }
-
-    .countdown-timer {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin: 14px 0;
-    }
-
-    .time-box {
-      background: #fff;
-      border-radius: 18px;
-      padding: 12px 8px;
-      border: 1px solid rgba(180, 0, 0, 0.18);
-      box-shadow: 0 10px 24px rgba(180, 0, 0, 0.08);
-    }
-
-    .time-number {
-      display: block;
-      font-size: clamp(1.3rem, 5vw, 2rem);
-      font-weight: 950;
-      color: var(--danger);
-      line-height: 1;
-    }
-
-    .time-label {
-      display: block;
-      margin-top: 5px;
-      font-size: 0.76rem;
-      font-weight: 850;
-      color: var(--danger-dark);
-    }
-
-    .countdown-detail {
-      margin: 8px 0 0 !important;
-      color: var(--danger-dark) !important;
-      font-size: 0.95rem !important;
-      font-weight: 850;
+      50% {
+        transform: translateY(-18px) rotate(3deg);
+      }
     }
 
     .hero-actions,
@@ -372,8 +349,13 @@
       transition: 0.22s ease;
     }
 
-    .btn:hover { transform: translateY(-3px); }
-    .btn:active { transform: scale(0.96); }
+    .btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
 
     .primary {
       background: var(--pink);
@@ -403,7 +385,7 @@
       padding: clamp(24px, 5vw, 44px);
       background: var(--card);
       border: 1px solid rgba(255, 255, 255, 0.76);
-      border-radius: var(--radius);
+      border-radius: 30px;
       box-shadow: var(--shadow);
     }
 
@@ -420,6 +402,201 @@
       margin-bottom: 24px;
     }
 
+    .home-letter-section {
+      margin-top: 26px;
+    }
+
+    .letter-preview {
+      width: min(520px, 100%);
+      margin: 0 auto;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: block;
+      perspective: 1000px;
+    }
+
+    .letter-envelope {
+      position: relative;
+      min-height: 220px;
+      border-radius: 28px;
+      background: linear-gradient(145deg, #fffdf8, #fff0f7);
+      border: 1px solid rgba(233, 95, 136, 0.15);
+      box-shadow: 0 20px 60px rgba(130, 60, 85, 0.18);
+      overflow: hidden;
+      transition: 0.35s ease;
+    }
+
+    .letter-preview:hover .letter-envelope {
+      transform: translateY(-6px) rotateX(5deg);
+    }
+
+    .letter-flap {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(145deg, rgba(255, 127, 163, 0.17), rgba(255, 209, 138, 0.22));
+      clip-path: polygon(0 0, 50% 58%, 100% 0);
+      transform-origin: top center;
+    }
+
+    .letter-seal {
+      position: absolute;
+      left: 50%;
+      top: 48%;
+      width: 58px;
+      height: 58px;
+      transform: translate(-50%, -50%);
+      border-radius: 999px;
+      background: var(--pink);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 1.45rem;
+      box-shadow: 0 10px 26px rgba(255, 127, 163, 0.35);
+      z-index: 3;
+    }
+
+    .letter-preview-text {
+      position: absolute;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      width: calc(100% - 48px);
+      text-align: center;
+      color: var(--muted);
+      font-weight: 800;
+      z-index: 4;
+    }
+
+    .letter-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(59, 36, 39, 0.48);
+      backdrop-filter: blur(14px);
+    }
+
+    .letter-modal.show {
+      display: flex;
+      animation: modalIn 0.28s ease both;
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .letter-stage {
+      width: min(720px, 100%);
+      max-height: calc(100dvh - 36px);
+      position: relative;
+      border-radius: 34px;
+      background: radial-gradient(circle at top left, rgba(255, 127, 163, 0.16), transparent 35%), #fffdf8;
+      box-shadow: 0 30px 90px rgba(30, 10, 20, 0.28);
+      overflow: auto;
+      padding: clamp(24px, 6vw, 46px);
+      animation: letterLift 0.45s cubic-bezier(.2,.8,.2,1) forwards;
+    }
+
+    @keyframes letterLift {
+      from {
+        transform: translateY(18px) scale(0.94);
+      }
+
+      to {
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .letter-close {
+      position: sticky;
+      top: 0;
+      margin-left: auto;
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: none;
+      background: rgba(59, 36, 39, 0.08);
+      color: var(--text);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-weight: 950;
+      z-index: 10;
+    }
+
+    .sealed-letter {
+      min-height: 320px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border-radius: 28px;
+      background: linear-gradient(145deg, #fff7f3, #fffdf8);
+      border: 1px solid rgba(233, 95, 136, 0.12);
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sealed-letter::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, transparent 48%, rgba(255, 127, 163, 0.12) 50%, transparent 52%);
+      pointer-events: none;
+    }
+
+    .sealed-letter h3 {
+      font-size: clamp(2rem, 7vw, 4rem);
+      letter-spacing: -0.06em;
+      line-height: 0.95;
+      margin-bottom: 12px;
+    }
+
+    .sealed-letter p {
+      color: var(--muted);
+      margin: 0 auto 18px;
+      max-width: 480px;
+    }
+
+    .letter-content {
+      display: none;
+      font-family: Georgia, serif;
+      font-size: 1.1rem;
+      color: #4b3034;
+      animation: viewIn 0.35s ease both;
+    }
+
+    .letter-stage.opened .sealed-letter {
+      display: none;
+    }
+
+    .letter-stage.opened .letter-content {
+      display: block;
+    }
+
+    .letter-content h3 {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: clamp(2rem, 6vw, 3.6rem);
+      letter-spacing: -0.06em;
+      line-height: 1;
+      margin-bottom: 18px;
+      color: var(--text);
+    }
+
+    .letter-content p + p {
+      margin-top: 16px;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -428,7 +605,8 @@
 
     .card,
     .gift-card,
-    .plan-card {
+    .plan-card,
+    .game-card {
       background: white;
       border-radius: 26px;
       padding: 24px;
@@ -454,7 +632,8 @@
     }
 
     .card h3,
-    .plan-card h3 {
+    .plan-card h3,
+    .game-card h3 {
       font-size: 1.25rem;
       margin-bottom: 8px;
     }
@@ -462,7 +641,8 @@
     .card p,
     .plan-card p,
     .gift-card p,
-    .moment p {
+    .moment p,
+    .game-card p {
       color: var(--muted);
     }
 
@@ -486,8 +666,13 @@
     }
 
     @keyframes giftMove {
-      0%, 100% { transform: rotate(-2deg) scale(1); }
-      50% { transform: rotate(2deg) scale(1.05); }
+      0%, 100% {
+        transform: rotate(-2deg) scale(1);
+      }
+
+      50% {
+        transform: rotate(2deg) scale(1.05);
+      }
     }
 
     .dragibus {
@@ -526,7 +711,7 @@
       width: 3px;
       height: calc(100% - 16px);
       border-radius: 999px;
-      background: linear-gradient(var(--pink), #ffd18a);
+      background: linear-gradient(var(--pink), var(--gold));
     }
 
     .moment {
@@ -579,20 +764,6 @@
       min-height: auto;
       padding: 8px 12px;
       font-size: 0.82rem;
-    }
-
-    .letter {
-      background: #fffdf8;
-      border-radius: 24px;
-      padding: clamp(24px, 5vw, 38px);
-      border: 1px solid rgba(120, 60, 80, 0.1);
-      font-family: Georgia, serif;
-      font-size: 1.1rem;
-      color: #4b3034;
-    }
-
-    .letter p + p {
-      margin-top: 16px;
     }
 
     .add-box,
@@ -655,15 +826,15 @@
       margin-top: 18px;
     }
 
-    .game {
-      background: white;
-      border-radius: 28px;
-      padding: clamp(22px, 5vw, 34px);
-      border: 1px solid rgba(233, 95, 136, 0.12);
-      box-shadow: 0 18px 45px rgba(130, 60, 85, 0.12);
+    .games-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 16px;
+      align-items: start;
     }
 
-    .question-card {
+    .question-card,
+    .mission-result {
       min-height: 170px;
       background:
         radial-gradient(circle at top left, rgba(255, 127, 163, 0.14), transparent 34%),
@@ -676,8 +847,9 @@
       border: 1px solid rgba(233, 95, 136, 0.1);
     }
 
-    .question {
-      font-size: clamp(1.35rem, 4vw, 2rem);
+    .question,
+    .mission-text {
+      font-size: clamp(1.25rem, 4vw, 1.9rem);
       font-weight: 900;
       letter-spacing: -0.035em;
       line-height: 1.15;
@@ -700,9 +872,14 @@
     .progress-fill {
       height: 100%;
       width: 3.3%;
-      background: linear-gradient(90deg, var(--pink), #ffd18a);
+      background: linear-gradient(90deg, var(--pink), var(--gold));
       border-radius: 999px;
       transition: width 0.25s ease;
+    }
+
+    .mission-emoji {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
     }
 
     .pulse {
@@ -710,9 +887,17 @@
     }
 
     @keyframes pulse {
-      0% { transform: scale(1); }
-      45% { transform: scale(1.04); }
-      100% { transform: scale(1); }
+      0% {
+        transform: scale(1);
+      }
+
+      45% {
+        transform: scale(1.04);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
 
     .heart {
@@ -725,8 +910,15 @@
     }
 
     @keyframes floatUp {
-      from { transform: translateY(0) scale(1); opacity: 0.9; }
-      to { transform: translateY(-105vh) scale(1.8); opacity: 0; }
+      from {
+        transform: translateY(0) scale(1);
+        opacity: 0.9;
+      }
+
+      to {
+        transform: translateY(-105vh) scale(1.8);
+        opacity: 0;
+      }
     }
 
     .falling-candy {
@@ -743,28 +935,12 @@
     }
 
     @keyframes candyFall {
-      from { transform: translateY(-80px) rotate(0deg); }
-      to { transform: translateY(calc(100vh + 120px)) rotate(720deg); }
-    }
-
-    .explosion-piece {
-      position: fixed;
-      left: 50%;
-      top: 50%;
-      z-index: 300;
-      pointer-events: none;
-      font-size: 32px;
-      animation: explode 1.4s ease-out forwards;
-    }
-
-    @keyframes explode {
-      0% {
-        transform: translate(-50%, -50%) scale(0.2) rotate(0deg);
-        opacity: 1;
+      from {
+        transform: translateY(-80px) rotate(0deg);
       }
-      100% {
-        transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.8) rotate(720deg);
-        opacity: 0;
+
+      to {
+        transform: translateY(calc(100vh + 120px)) rotate(720deg);
       }
     }
 
@@ -782,7 +958,7 @@
       opacity: 0;
       pointer-events: none;
       transition: 0.25s ease;
-      z-index: 400;
+      z-index: 700;
       text-align: center;
       max-width: calc(100vw - 28px);
     }
@@ -796,6 +972,12 @@
       text-align: center;
       padding: 44px 10px 70px;
       color: var(--muted);
+    }
+
+    @media (max-width: 860px) {
+      .games-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 760px) {
@@ -825,10 +1007,25 @@
         padding: 8px 11px;
       }
 
-      .word-1 { top: 12%; left: 5%; }
-      .word-2 { top: 14%; right: 5%; }
-      .word-3 { bottom: 8%; left: 5%; }
-      .word-4 { bottom: 6%; right: 5%; }
+      .word-1 {
+        top: 12%;
+        left: 5%;
+      }
+
+      .word-2 {
+        top: 14%;
+        right: 5%;
+      }
+
+      .word-3 {
+        bottom: 8%;
+        left: 5%;
+      }
+
+      .word-4 {
+        bottom: 6%;
+        right: 5%;
+      }
 
       .grid,
       .gift-zone,
@@ -854,8 +1051,9 @@
         flex-direction: column;
       }
 
-      .countdown-timer {
-        grid-template-columns: repeat(2, 1fr);
+      .letter-stage {
+        padding: 20px;
+        border-radius: 26px;
       }
 
       section.panel {
@@ -870,6 +1068,7 @@
     <div class="lock-card">
       <div class="lock-title">Espace privé</div>
       <p>Entre le code d’accès pour ouvrir votre site.</p>
+      <p style="font-size:0.9rem; opacity:0.75;">Code : gwileplusbeau</p>
 
       <form class="access-form" id="accessForm">
         <input
@@ -893,8 +1092,8 @@
         <button class="tab-btn active" type="button" data-view="accueil">Accueil</button>
         <button class="tab-btn" type="button" data-view="amour">Pourquoi je t’aime</button>
         <button class="tab-btn" type="button" data-view="histoire">Notre histoire</button>
-        <button class="tab-btn" type="button" data-view="organisation">Organisation</button>
-        <button class="tab-btn" type="button" data-view="questions">Questions</button>
+        <button class="tab-btn" type="button" data-view="plans">Nos prochaines aventures</button>
+        <button class="tab-btn" type="button" data-view="jeux">Jeux</button>
       </nav>
 
       <main>
@@ -911,41 +1110,24 @@
                 <h1>Mayele</h1>
 
                 <p>
-                  Un site pour garder vos souvenirs, organiser vos idées, prévoir vos sorties,
-                  et avoir un petit endroit rien qu’à vous deux.
+                  Un site pour garder vos souvenirs, vos petits projets, vos jeux,
+                  et les mots que je veux te laisser.
                 </p>
 
                 <div class="hero-actions">
                   <button class="btn primary" type="button" data-go="histoire">Ajouter un souvenir</button>
-                  <button class="btn secondary" type="button" data-go="organisation">Organiser une sortie</button>
-                  <button class="btn secondary" type="button" data-go="questions">Faire les questions</button>
+                  <button class="btn secondary" type="button" data-go="plans">Prévoir une aventure</button>
+                  <button class="btn secondary" type="button" data-go="jeux">Lancer un jeu</button>
                 </div>
 
-                <div class="countdown-card">
-                  <p class="countdown-label">Rends-moi mon doudou et mon maillot</p>
-
-                  <div class="countdown-timer">
-                    <div class="time-box">
-                      <span class="time-number" id="days">00</span>
-                      <span class="time-label">jours</span>
+                <div class="home-letter-section">
+                  <button class="letter-preview" type="button" id="openLetterPreview" aria-label="Ouvrir la lettre">
+                    <div class="letter-envelope">
+                      <div class="letter-flap"></div>
+                      <div class="letter-seal">💌</div>
+                      <div class="letter-preview-text">Une lettre pour toi — clique sans trop savoir.</div>
                     </div>
-                    <div class="time-box">
-                      <span class="time-number" id="hours">00</span>
-                      <span class="time-label">heures</span>
-                    </div>
-                    <div class="time-box">
-                      <span class="time-number" id="minutes">00</span>
-                      <span class="time-label">minutes</span>
-                    </div>
-                    <div class="time-box">
-                      <span class="time-number" id="seconds">00</span>
-                      <span class="time-label">secondes</span>
-                    </div>
-                  </div>
-
-                  <p class="countdown-detail" id="countdownDetail">
-                    Deadline : lundi soir à 23h59. Après, ça explose.
-                  </p>
+                  </button>
                 </div>
               </div>
             </div>
@@ -1042,29 +1224,18 @@
 
             <div class="timeline" id="timeline"></div>
           </section>
-
-          <section class="panel">
-            <h2>Une lettre pour toi</h2>
-            <div class="letter">
-              <p>Mayele,</p>
-              <p>Je voulais te faire quelque chose de différent. Pas juste un message, mais un petit endroit à toi.</p>
-              <p>J’aime ta façon d’être, ta beauté, ton énergie, ton univers avec les chevaux, tes petits goûts comme les Dragibus, et tous les moments qu’on a déjà vécus ensemble.</p>
-              <p>De la Fête de la Musique à Nantes jusqu’aux moments plus simples, tout ça fait partie de notre histoire.</p>
-              <p>Et ce site, c’est juste une façon de te dire que je suis heureux de t’avoir dans ma vie.</p>
-            </div>
-          </section>
         </div>
 
-        <div class="view" id="organisation">
+        <div class="view" id="plans">
           <section class="panel">
-            <h2>Organisation</h2>
+            <h2>Nos prochaines aventures</h2>
             <p class="intro">
-              Ici, vous pouvez noter vos idées de sorties, vos dates à prévoir, vos vacances d’été,
-              vos envies random, ou les choses à faire ensemble.
+              Ici, vous pouvez noter vos sorties, vos envies, vos vacances d’été,
+              vos mini dates ou toutes les idées à faire ensemble.
             </p>
 
             <div class="buttons-row" style="justify-content:flex-start;">
-              <button class="btn primary" type="button" id="togglePlanFormBtn">+ Ajouter une idée</button>
+              <button class="btn primary" type="button" id="togglePlanFormBtn">+ Ajouter une envie</button>
               <button class="btn secondary" type="button" id="randomPlanBtn">Idée surprise</button>
             </div>
 
@@ -1087,7 +1258,7 @@
                 </div>
 
                 <div class="buttons-row" style="justify-content:flex-start;">
-                  <button class="btn primary" type="submit">Ajouter à l’organisation</button>
+                  <button class="btn primary" type="submit">Ajouter à nos aventures</button>
                   <button class="btn secondary" type="button" id="closePlanFormBtn">Fermer</button>
                 </div>
               </form>
@@ -1096,31 +1267,55 @@
             <div id="plannerList" class="planner-grid"></div>
 
             <div id="plannerEmpty" class="empty-state">
-              Aucune idée pour l’instant. Ajoutez une sortie, une date ou une idée de vacances.
+              Aucune envie pour l’instant. Ajoutez une sortie, une date ou une idée de vacances.
             </div>
           </section>
         </div>
 
-        <div class="view" id="questions">
+        <div class="view" id="jeux">
           <section class="panel">
-            <h2>Questions à deux</h2>
-            <p class="intro">Les questions avancent dans l’ordre.</p>
+            <h2>Page jeux</h2>
+            <p class="intro">
+              Deux petits jeux pour parler, rire, choisir une mission ou faire une pause à deux.
+            </p>
 
-            <div class="game">
-              <div class="question-card" id="questionCard">
-                <p class="question" id="questionText"></p>
+            <div class="games-grid">
+              <div class="game-card">
+                <h3>Jeu 1 — Questions à deux</h3>
+                <p class="intro">Les questions avancent dans l’ordre, avec une option surprise.</p>
+
+                <div class="question-card" id="questionCard">
+                  <p class="question" id="questionText"></p>
+                </div>
+
+                <div class="buttons-row">
+                  <button class="btn secondary" type="button" id="previousQuestionBtn">Précédente</button>
+                  <button class="btn primary" type="button" id="nextQuestionBtn">Suivante</button>
+                  <button class="btn dark" type="button" id="surpriseQuestionBtn">Surprise</button>
+                </div>
+
+                <p class="question-meta" id="questionMeta"></p>
+
+                <div class="progress">
+                  <div class="progress-fill" id="progressFill"></div>
+                </div>
               </div>
 
-              <div class="buttons-row">
-                <button class="btn secondary" type="button" id="previousQuestionBtn">Question précédente</button>
-                <button class="btn primary" type="button" id="nextQuestionBtn">Question suivante</button>
-                <button class="btn dark" type="button" id="surpriseQuestionBtn">Question surprise</button>
-              </div>
+              <div class="game-card">
+                <h3>Jeu 2 — Roulette des missions</h3>
+                <p class="intro">Clique et le site choisit une mini mission à faire maintenant ou plus tard.</p>
 
-              <p class="question-meta" id="questionMeta"></p>
+                <div class="mission-result" id="missionCard">
+                  <div>
+                    <div class="mission-emoji" id="missionEmoji">🎲</div>
+                    <p class="mission-text" id="missionText">Prête ? Tire une mission.</p>
+                  </div>
+                </div>
 
-              <div class="progress">
-                <div class="progress-fill" id="progressFill"></div>
+                <div class="buttons-row">
+                  <button class="btn primary" type="button" id="drawMissionBtn">Tirer une mission</button>
+                  <button class="btn secondary" type="button" id="missionDoneBtn">Mission validée</button>
+                </div>
               </div>
             </div>
           </section>
@@ -1131,20 +1326,51 @@
     </div>
   </div>
 
+  <div class="letter-modal" id="letterModal" aria-hidden="true">
+    <div class="letter-stage" id="letterStage">
+      <button class="letter-close" type="button" id="closeLetterBtn" aria-label="Fermer">×</button>
+
+      <div class="sealed-letter">
+        <div>
+          <h3>Une lettre pour toi</h3>
+          <p>Elle n’est pas encore ouverte. Clique seulement si tu acceptes un petit moment sérieux.</p>
+          <button class="btn primary" type="button" id="openLetterBtn">Ouvrir la lettre</button>
+        </div>
+      </div>
+
+      <div class="letter-content">
+        <h3>Mayele,</h3>
+        <p>
+          Je voulais te faire quelque chose de différent. Pas juste un message,
+          pas juste une phrase vite envoyée, mais un petit endroit à toi.
+        </p>
+        <p>
+          J’aime ta façon d’être, ta beauté, ton énergie, ton univers avec les chevaux,
+          tes petits goûts comme les Dragibus, et tous les moments qu’on a déjà vécus ensemble.
+        </p>
+        <p>
+          De la Fête de la Musique à Nantes jusqu’aux moments plus simples,
+          les sorties, les soirées, les trajets, les fois où on se retrouve malgré la distance,
+          tout ça fait partie de notre histoire.
+        </p>
+        <p>
+          Et ce site, c’est juste une façon de te dire que je suis heureux de t’avoir dans ma vie.
+        </p>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast">Action validée</div>
 
   <script>
     var ACCESS_CODE = "gwileplusbeau";
     var currentQuestionIndex = 0;
-    var countdownExploded = false;
     var editingEventId = null;
 
     var memoryBackup = {
-      mayele_history_v3: null,
-      mayele_plans_v3: null
+      mayele_history_v6: null,
+      mayele_plans_v6: null
     };
-
-    var deadline = new Date("2026-05-04T23:59:00+02:00").getTime();
 
     var defaultEvents = [
       {
@@ -1212,6 +1438,19 @@
       "Est-ce que tu m’aimes plus qu’un paquet de Dragibus ? Attention."
     ];
 
+    var missions = [
+      { emoji: "🎬", text: "Choisissez chacun un film. Celui qui défend le mieux son film gagne." },
+      { emoji: "🍬", text: "Mission Dragibus : chacun doit deviner la couleur préférée de l’autre." },
+      { emoji: "💌", text: "Écris une phrase gentille à l’autre, mais sans utiliser le mot beau ou belle." },
+      { emoji: "📍", text: "Trouvez une idée de sortie à moins de 10 €." },
+      { emoji: "🎵", text: "Choisis une chanson qui pourrait être dans la bande-son de votre histoire." },
+      { emoji: "🐴", text: "Inventez le nom du cheval imaginaire que vous auriez ensemble." },
+      { emoji: "🚆", text: "Trouvez une mini idée à faire pendant un trajet en train." },
+      { emoji: "🍿", text: "Préparez une soirée film parfaite : film, snack, boisson, plaid." },
+      { emoji: "🧸", text: "Fais un câlin ou négocie officiellement la garde du doudou." },
+      { emoji: "🌙", text: "Planifiez une sortie de nuit simple : marche, glace, musique ou vue sympa." }
+    ];
+
     function safeJSONGet(key, fallback) {
       try {
         var value = localStorage.getItem(key);
@@ -1220,12 +1459,14 @@
         if (memoryBackup[key] !== undefined && memoryBackup[key] !== null) {
           return memoryBackup[key];
         }
+
         return fallback;
       }
     }
 
     function safeJSONSet(key, value) {
       memoryBackup[key] = value;
+
       try {
         localStorage.setItem(key, JSON.stringify(value));
       } catch (error) {}
@@ -1249,14 +1490,13 @@
     function unlockSite() {
       document.getElementById("lockScreen").style.display = "none";
       document.getElementById("app").classList.add("unlocked");
-      safeSet("mayele_access_v3", ACCESS_CODE);
+      safeSet("mayele_access_v6", ACCESS_CODE);
       showToast("Bienvenue Mayele");
       createHeart();
-      updateCountdown();
     }
 
     function checkAccess() {
-      if (safeGet("mayele_access_v3", "") === ACCESS_CODE) {
+      if (safeGet("mayele_access_v6", "") === ACCESS_CODE) {
         unlockSite();
       }
     }
@@ -1271,6 +1511,7 @@
 
       for (var j = 0; j < buttons.length; j++) {
         buttons[j].classList.remove("active");
+
         if (buttons[j].getAttribute("data-view") === viewId) {
           buttons[j].classList.add("active");
         }
@@ -1281,15 +1522,49 @@
       createHeart();
     }
 
+    function openLetterModal() {
+      var modal = document.getElementById("letterModal");
+      var stage = document.getElementById("letterStage");
+
+      stage.classList.remove("opened");
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      showToast("Lettre trouvée");
+    }
+
+    function closeLetterModal() {
+      var modal = document.getElementById("letterModal");
+      var stage = document.getElementById("letterStage");
+
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+      stage.classList.remove("opened");
+      document.body.style.overflow = "";
+    }
+
+    function revealLetter() {
+      document.getElementById("letterStage").classList.add("opened");
+      createHeart();
+      createHeart();
+    }
+
     function normalizeDateInput(value) {
       var raw = String(value || "").trim();
+
       if (!raw) return "";
 
       var isoMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if (isoMatch) return raw;
+
+      if (isoMatch) {
+        return raw;
+      }
 
       var frMatch = raw.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);
-      if (!frMatch) return "";
+
+      if (!frMatch) {
+        return "";
+      }
 
       var day = frMatch[1].padStart(2, "0");
       var month = frMatch[2].padStart(2, "0");
@@ -1310,7 +1585,9 @@
 
     function formatDate(dateValue) {
       if (!dateValue) return "Date à préciser";
+
       var date = new Date(dateValue + "T12:00:00");
+
       return date.toLocaleDateString("fr-FR", {
         day: "numeric",
         month: "long",
@@ -1320,8 +1597,11 @@
 
     function formatDateForInput(dateValue) {
       if (!dateValue) return "";
+
       var parts = dateValue.split("-");
+
       if (parts.length !== 3) return "";
+
       return parts[2] + "/" + parts[1] + "/" + parts[0];
     }
 
@@ -1335,16 +1615,20 @@
     }
 
     function getHistoryEvents() {
-      var saved = safeJSONGet("mayele_history_v3", null);
-      if (Array.isArray(saved)) return saved;
+      var saved = safeJSONGet("mayele_history_v6", null);
+
+      if (Array.isArray(saved)) {
+        return saved;
+      }
 
       var initial = defaultEvents.slice();
-      safeJSONSet("mayele_history_v3", initial);
+      safeJSONSet("mayele_history_v6", initial);
+
       return initial;
     }
 
     function saveHistoryEvents(events) {
-      safeJSONSet("mayele_history_v3", events);
+      safeJSONSet("mayele_history_v6", events);
     }
 
     function renderTimeline() {
@@ -1361,6 +1645,7 @@
       for (var i = 0; i < events.length; i++) {
         var item = events[i];
         var moment = document.createElement("div");
+
         moment.className = "moment";
 
         moment.innerHTML =
@@ -1385,8 +1670,12 @@
       for (var i = 0; i < deleteButtons.length; i++) {
         deleteButtons[i].addEventListener("click", function(e) {
           e.stopPropagation();
+
           var id = this.getAttribute("data-delete-event");
-          if (!confirm("Tu es sûr de vouloir supprimer ce souvenir ?")) return;
+
+          if (!confirm("Tu es sûr de vouloir supprimer ce souvenir ?")) {
+            return;
+          }
 
           var events = getHistoryEvents().filter(function(item) {
             return item.id !== id;
@@ -1434,10 +1723,12 @@
       }
 
       editingEventId = id;
+
       document.getElementById("eventDate").value = formatDateForInput(eventItem.date);
       document.getElementById("eventTitle").value = eventItem.title;
       document.getElementById("eventText").value = eventItem.text;
       document.getElementById("saveEventBtn").textContent = "Modifier le souvenir";
+
       openEventForm();
 
       setTimeout(function() {
@@ -1474,6 +1765,7 @@
             events[i].text = text;
           }
         }
+
         showToast("Souvenir modifié");
       } else {
         events.push({
@@ -1482,6 +1774,7 @@
           title: title,
           text: text
         });
+
         showToast("Souvenir ajouté");
       }
 
@@ -1492,11 +1785,11 @@
     }
 
     function getPlans() {
-      return safeJSONGet("mayele_plans_v3", []);
+      return safeJSONGet("mayele_plans_v6", []);
     }
 
     function savePlans(plans) {
-      safeJSONSet("mayele_plans_v3", plans);
+      safeJSONSet("mayele_plans_v6", plans);
     }
 
     function addPlan(e) {
@@ -1533,8 +1826,10 @@
 
       savePlans(plans);
       renderPlans();
+
       document.getElementById("planForm").reset();
-      showToast("Idée ajoutée");
+
+      showToast("Envie ajoutée");
       createHeart();
     }
 
@@ -1597,7 +1892,7 @@
       }
 
       if (!plan) {
-        showToast("Idée introuvable");
+        showToast("Envie introuvable");
         return;
       }
 
@@ -1607,11 +1902,21 @@
       }
 
       var text = "";
-      if (plan.place) text += "Lieu : " + plan.place + ". ";
-      if (plan.note) text += plan.note;
-      if (!text) text = "Une idée organisée ensemble, ajoutée à notre histoire.";
+
+      if (plan.place) {
+        text += "Lieu : " + plan.place + ". ";
+      }
+
+      if (plan.note) {
+        text += plan.note;
+      }
+
+      if (!text) {
+        text = "Une envie prévue ensemble, ajoutée à notre histoire.";
+      }
 
       var events = getHistoryEvents();
+
       events.push({
         id: "event-from-plan-" + Date.now(),
         date: plan.date,
@@ -1649,6 +1954,7 @@
       for (var i = 0; i < plans.length; i++) {
         var plan = plans[i];
         var card = document.createElement("div");
+
         card.className = "plan-card" + (plan.done ? " done" : "");
 
         card.innerHTML =
@@ -1702,7 +2008,10 @@
       for (var k = 0; k < deleteButtons.length; k++) {
         deleteButtons[k].addEventListener("click", function() {
           var id = this.getAttribute("data-delete-plan");
-          if (!confirm("Tu veux vraiment supprimer cette idée ?")) return;
+
+          if (!confirm("Tu veux vraiment supprimer cette envie ?")) {
+            return;
+          }
 
           var plans = getPlans().filter(function(plan) {
             return plan.id !== id;
@@ -1710,7 +2019,7 @@
 
           savePlans(plans);
           renderPlans();
-          showToast("Idée supprimée");
+          showToast("Envie supprimée");
         });
       }
 
@@ -1740,102 +2049,64 @@
 
     function nextQuestion() {
       currentQuestionIndex++;
+
       if (currentQuestionIndex >= questions.length) {
         currentQuestionIndex = 0;
         showToast("On revient au début");
       } else {
         showToast("Question suivante");
       }
+
       updateQuestion();
       createHeart();
     }
 
     function previousQuestion() {
       currentQuestionIndex--;
+
       if (currentQuestionIndex < 0) {
         currentQuestionIndex = questions.length - 1;
         showToast("Retour à la dernière question");
       } else {
         showToast("Question précédente");
       }
+
       updateQuestion();
       createHeart();
     }
 
     function surpriseQuestion() {
       var oldIndex = currentQuestionIndex;
+
       while (currentQuestionIndex === oldIndex) {
         currentQuestionIndex = Math.floor(Math.random() * questions.length);
       }
+
       showToast("Question surprise");
       updateQuestion();
       createHeart();
     }
 
-    function updateCountdown() {
-      var now = new Date().getTime();
-      var distance = deadline - now;
+    function drawMission() {
+      var mission = missions[Math.floor(Math.random() * missions.length)];
+      var missionCard = document.getElementById("missionCard");
+      var missionEmoji = document.getElementById("missionEmoji");
+      var missionText = document.getElementById("missionText");
 
-      var daysEl = document.getElementById("days");
-      var hoursEl = document.getElementById("hours");
-      var minutesEl = document.getElementById("minutes");
-      var secondsEl = document.getElementById("seconds");
-      var detailEl = document.getElementById("countdownDetail");
+      missionEmoji.textContent = mission.emoji;
+      missionText.textContent = mission.text;
 
-      if (!daysEl || !hoursEl || !minutesEl || !secondsEl || !detailEl) return;
+      missionCard.classList.remove("pulse");
+      void missionCard.offsetWidth;
+      missionCard.classList.add("pulse");
 
-      if (distance <= 0) {
-        daysEl.textContent = "00";
-        hoursEl.textContent = "00";
-        minutesEl.textContent = "00";
-        secondsEl.textContent = "00";
-        detailEl.textContent = "Trop tard. Le doudou et le maillot n’ont pas été rendus. BOUM.";
-
-        if (!countdownExploded) {
-          countdownExploded = true;
-          triggerExplosion();
-        }
-        return;
-      }
-
-      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      var hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
-      var minutes = Math.floor((distance / (1000 * 60)) % 60);
-      var seconds = Math.floor((distance / 1000) % 60);
-
-      daysEl.textContent = String(days).padStart(2, "0");
-      hoursEl.textContent = String(hours).padStart(2, "0");
-      minutesEl.textContent = String(minutes).padStart(2, "0");
-      secondsEl.textContent = String(seconds).padStart(2, "0");
-      detailEl.textContent = "Deadline : lundi soir à 23h59. Après, ça explose.";
-    }
-
-    function triggerExplosion() {
-      showToast("BOUM bahaha");
-      var emojis = ["💥", "🧸", "👕", "💗", "🍬"];
-
-      for (var i = 0; i < 85; i++) {
-        setTimeout(function() {
-          var piece = document.createElement("div");
-          var x = Math.floor(Math.random() * 700 - 350) + "px";
-          var y = Math.floor(Math.random() * 700 - 350) + "px";
-
-          piece.className = "explosion-piece";
-          piece.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-          piece.style.setProperty("--x", x);
-          piece.style.setProperty("--y", y);
-
-          document.body.appendChild(piece);
-
-          setTimeout(function() {
-            piece.remove();
-          }, 1600);
-        }, i * 14);
-      }
+      showToast("Mission tirée");
+      createHeart();
     }
 
     function createHeart() {
       var heart = document.createElement("div");
+
       heart.className = "heart";
       heart.textContent = "💗";
       heart.style.left = Math.random() * 100 + "vw";
@@ -1854,6 +2125,7 @@
       for (var i = 0; i < 45; i++) {
         setTimeout(function() {
           var candy = document.createElement("div");
+
           candy.className = "falling-candy";
           candy.style.background = color;
           candy.style.left = Math.random() * 100 + "vw";
@@ -1872,12 +2144,14 @@
 
     function showToast(message) {
       var toast = document.getElementById("toast");
+
       if (!toast) return;
 
       toast.textContent = message;
       toast.classList.add("show");
 
       clearTimeout(window.toastTimer);
+
       window.toastTimer = setTimeout(function() {
         toast.classList.remove("show");
       }, 1500);
@@ -1886,6 +2160,7 @@
     function initSite() {
       document.getElementById("accessForm").addEventListener("submit", function(e) {
         e.preventDefault();
+
         var accessInput = document.getElementById("accessInput");
         var code = accessInput.value.trim().toLowerCase();
 
@@ -1899,6 +2174,7 @@
       });
 
       var tabButtons = document.querySelectorAll(".tab-btn");
+
       for (var i = 0; i < tabButtons.length; i++) {
         tabButtons[i].addEventListener("click", function() {
           openView(this.getAttribute("data-view"));
@@ -1906,6 +2182,7 @@
       }
 
       var goButtons = document.querySelectorAll("[data-go]");
+
       for (var j = 0; j < goButtons.length; j++) {
         goButtons[j].addEventListener("click", function() {
           openView(this.getAttribute("data-go"));
@@ -1913,11 +2190,13 @@
       }
 
       var cards = document.querySelectorAll(".card");
+
       for (var k = 0; k < cards.length; k++) {
         cards[k].addEventListener("click", function() {
           this.classList.remove("pulse");
           void this.offsetWidth;
           this.classList.add("pulse");
+
           showToast(this.getAttribute("data-message"));
           createHeart();
           createHeart();
@@ -1925,11 +2204,28 @@
       }
 
       var candies = document.querySelectorAll(".candy");
+
       for (var l = 0; l < candies.length; l++) {
         candies[l].addEventListener("click", function() {
           createCandyAvalanche(this.getAttribute("data-color"));
         });
       }
+
+      document.getElementById("openLetterPreview").addEventListener("click", openLetterModal);
+      document.getElementById("openLetterBtn").addEventListener("click", revealLetter);
+      document.getElementById("closeLetterBtn").addEventListener("click", closeLetterModal);
+
+      document.getElementById("letterModal").addEventListener("click", function(e) {
+        if (e.target === this) {
+          closeLetterModal();
+        }
+      });
+
+      document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") {
+          closeLetterModal();
+        }
+      });
 
       document.getElementById("toggleEventFormBtn").addEventListener("click", function() {
         editingEventId = null;
@@ -1956,19 +2252,23 @@
       document.getElementById("nextQuestionBtn").addEventListener("click", nextQuestion);
       document.getElementById("surpriseQuestionBtn").addEventListener("click", surpriseQuestion);
 
+      document.getElementById("drawMissionBtn").addEventListener("click", drawMission);
+      document.getElementById("missionDoneBtn").addEventListener("click", function() {
+        showToast("Mission validée");
+        createHeart();
+        createHeart();
+      });
+
       renderTimeline();
       renderPlans();
       updateQuestion();
       checkAccess();
-      updateCountdown();
-
-      setInterval(updateCountdown, 1000);
 
       setInterval(function() {
-        if (Math.random() > 0.76) {
+        if (Math.random() > 0.78) {
           createHeart();
         }
-      }, 2600);
+      }, 2800);
     }
 
     document.addEventListener("DOMContentLoaded", initSite);
