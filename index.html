@@ -1304,7 +1304,7 @@
          <section class="panel">
            <h2>Notre histoire</h2>
            <p class="intro">
-             Les souvenirs sont classés automatiquement par date. Tu peux en ajouter, les modifier ou les supprimer.
+             Les souvenirs sont enregistrés dans Supabase et visibles sur vos deux téléphones.
            </p>
 
            <div class="buttons-row" style="justify-content:flex-start; margin-bottom:18px;">
@@ -1334,8 +1334,7 @@
          <section class="panel">
            <h2>Nos prochaines aventures</h2>
            <p class="intro">
-             Ici, vous pouvez noter vos sorties, vos envies, vos vacances d’été,
-             vos mini dates ou toutes les idées à faire ensemble.
+             Les envies et prochaines sorties sont enregistrées dans Supabase pour que vous les voyiez tous les deux.
            </p>
 
            <div class="buttons-row" style="justify-content:flex-start;">
@@ -1462,43 +1461,40 @@
 
  <div class="toast" id="toast">Action validée</div>
 
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
  <script>
    var ACCESS_CODE = "gwileplusbeau";
+
+   var SUPABASE_URL = "https://qrjztuynucdrgsqsugev.supabase.co";
+   var SUPABASE_PUBLIC_KEY = "sb_publishable_rqqKn5dqiNEgbVc1Geljtg_9WpbES2U";
+   var supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
+
    var currentQuestionIndex = 0;
    var editingEventId = null;
 
-   var memoryBackup = {
-     mayele_history_v7: null,
-     mayele_plans_v7: null
-   };
-
    var defaultEvents = [
      {
-       id: "default-1",
        date: "2025-06-21",
        title: "Notre premier date — la Fête de la Musique à Nantes",
        text: "C’est là que tout a commencé. Un moment simple, vivant, avec la musique, Nantes, et surtout toi."
      },
      {
-       id: "default-2",
        date: "2025-09-02",
        title: "Le début de l’année scolaire",
        text: "Petit à petit, on s’est rapprochés, puis on s’est mis ensemble."
      },
      {
-       id: "default-3",
        date: "2025-10-01",
        title: "Les sorties et les soirées",
        text: "Des moments dehors, des soirées, des souvenirs qui se construisent sans forcément qu’on s’en rende compte."
      },
      {
-       id: "default-4",
        date: "2025-11-01",
        title: "Quand tu es venue chez moi",
        text: "Ces moments-là comptent aussi. Être ensemble dans un endroit plus calme, c’est différent."
      },
      {
-       id: "default-5",
        date: "2025-12-01",
        title: "Le train",
        text: "La distance est là, mais il y a aussi les trajets, les retrouvailles, et ces moments qui font partie de l’histoire."
@@ -1551,24 +1547,9 @@
      { emoji: "🌙", text: "Planifiez une sortie de nuit simple : marche, glace, musique ou vue sympa." }
    ];
 
-   function safeJSONGet(key, fallback) {
+   function safeSet(key, value) {
      try {
-       var value = localStorage.getItem(key);
-       return value ? JSON.parse(value) : fallback;
-     } catch (error) {
-       if (memoryBackup[key] !== undefined && memoryBackup[key] !== null) {
-         return memoryBackup[key];
-       }
-
-       return fallback;
-     }
-   }
-
-   function safeJSONSet(key, value) {
-     memoryBackup[key] = value;
-
-     try {
-       localStorage.setItem(key, JSON.stringify(value));
+       localStorage.setItem(key, value);
      } catch (error) {}
    }
 
@@ -1581,23 +1562,49 @@
      }
    }
 
-   function safeSet(key, value) {
-     try {
-       localStorage.setItem(key, value);
-     } catch (error) {}
-   }
-
    function unlockSite() {
      document.getElementById("lockScreen").style.display = "none";
      document.getElementById("app").classList.add("unlocked");
-     safeSet("mayele_access_v7", ACCESS_CODE);
+     safeSet("mayele_access_supabase_v1", ACCESS_CODE);
      showToast("Bienvenue Mayele");
      createHeart();
+     refreshRemoteData();
    }
 
    function checkAccess() {
-     if (safeGet("mayele_access_v7", "") === ACCESS_CODE) {
+     if (safeGet("mayele_access_supabase_v1", "") === ACCESS_CODE) {
        unlockSite();
+     }
+   }
+
+   async function refreshRemoteData() {
+     await renderTimeline();
+     await renderPlans();
+   }
+
+   async function seedDefaultEventsIfNeeded() {
+     var existing = await supabaseClient
+       .from("mayele_history")
+       .select("id")
+       .limit(1);
+
+     if (existing.error) {
+       console.error(existing.error);
+       showToast("Erreur Supabase");
+       return;
+     }
+
+     if (existing.data && existing.data.length > 0) {
+       return;
+     }
+
+     var insert = await supabaseClient
+       .from("mayele_history")
+       .insert(defaultEvents);
+
+     if (insert.error) {
+       console.error(insert.error);
+       showToast("Erreur initialisation");
      }
    }
 
@@ -1620,6 +1627,10 @@
      document.getElementById(viewId).classList.add("active");
      window.scrollTo({ top: 0, behavior: "smooth" });
      createHeart();
+
+     if (viewId === "histoire" || viewId === "plans") {
+       refreshRemoteData();
+     }
    }
 
    function openLetterModal() {
@@ -1678,7 +1689,7 @@
    }
 
    function escapeHTML(text) {
-     return String(text)
+     return String(text || "")
        .replace(/&/g, "&amp;")
        .replace(/</g, "&lt;")
        .replace(/>/g, "&gt;")
@@ -1686,33 +1697,34 @@
        .replace(/'/g, "&#039;");
    }
 
-   function getHistoryEvents() {
-     var saved = safeJSONGet("mayele_history_v7", null);
+   async function getHistoryEvents() {
+     await seedDefaultEventsIfNeeded();
 
-     if (Array.isArray(saved)) {
-       return saved;
+     var result = await supabaseClient
+       .from("mayele_history")
+       .select("id,date,title,text,created_at")
+       .order("date", { ascending: true })
+       .order("created_at", { ascending: true });
+
+     if (result.error) {
+       console.error(result.error);
+       showToast("Erreur chargement histoire");
+       return [];
      }
 
-     var initial = defaultEvents.slice();
-     safeJSONSet("mayele_history_v7", initial);
-
-     return initial;
+     return result.data || [];
    }
 
-   function saveHistoryEvents(events) {
-     safeJSONSet("mayele_history_v7", events);
-   }
-
-   function renderTimeline() {
+   async function renderTimeline() {
      var timeline = document.getElementById("timeline");
-     var events = getHistoryEvents();
+     var events = await getHistoryEvents();
 
-     events.sort(function(a, b) {
-       return new Date(a.date) - new Date(b.date);
-     });
-
-     saveHistoryEvents(events);
      timeline.innerHTML = "";
+
+     if (events.length === 0) {
+       timeline.innerHTML = '<div class="empty-state">Aucun souvenir pour l’instant.</div>';
+       return;
+     }
 
      for (var i = 0; i < events.length; i++) {
        var item = events[i];
@@ -1740,7 +1752,7 @@
      var editButtons = document.querySelectorAll("[data-edit-event]");
 
      for (var i = 0; i < deleteButtons.length; i++) {
-       deleteButtons[i].addEventListener("click", function(e) {
+       deleteButtons[i].addEventListener("click", async function(e) {
          e.stopPropagation();
 
          var id = this.getAttribute("data-delete-event");
@@ -1749,20 +1761,26 @@
            return;
          }
 
-         var events = getHistoryEvents().filter(function(item) {
-           return item.id !== id;
-         });
+         var result = await supabaseClient
+           .from("mayele_history")
+           .delete()
+           .eq("id", id);
 
-         saveHistoryEvents(events);
-         renderTimeline();
+         if (result.error) {
+           console.error(result.error);
+           showToast("Erreur suppression");
+           return;
+         }
+
+         await renderTimeline();
          showToast("Souvenir supprimé");
        });
      }
 
      for (var j = 0; j < editButtons.length; j++) {
-       editButtons[j].addEventListener("click", function(e) {
+       editButtons[j].addEventListener("click", async function(e) {
          e.stopPropagation();
-         startEditEvent(this.getAttribute("data-edit-event"));
+         await startEditEvent(this.getAttribute("data-edit-event"));
        });
      }
    }
@@ -1778,22 +1796,20 @@
      document.getElementById("eventFormBox").classList.remove("show");
    }
 
-   function startEditEvent(id) {
-     var events = getHistoryEvents();
-     var eventItem = null;
+   async function startEditEvent(id) {
+     var result = await supabaseClient
+       .from("mayele_history")
+       .select("id,date,title,text")
+       .eq("id", id)
+       .single();
 
-     for (var i = 0; i < events.length; i++) {
-       if (events[i].id === id) {
-         eventItem = events[i];
-         break;
-       }
-     }
-
-     if (!eventItem) {
+     if (result.error) {
+       console.error(result.error);
        showToast("Souvenir introuvable");
        return;
      }
 
+     var eventItem = result.data;
      editingEventId = id;
 
      document.getElementById("eventDate").value = formatDateForInput(eventItem.date);
@@ -1810,7 +1826,7 @@
      showToast("Modification ouverte");
    }
 
-   function addOrUpdateEvent(e) {
+   async function addOrUpdateEvent(e) {
      e.preventDefault();
 
      var date = normalizeDateInput(document.getElementById("eventDate").value);
@@ -1827,44 +1843,63 @@
        return;
      }
 
-     var events = getHistoryEvents();
-
      if (editingEventId) {
-       for (var i = 0; i < events.length; i++) {
-         if (events[i].id === editingEventId) {
-           events[i].date = date;
-           events[i].title = title;
-           events[i].text = text;
-         }
+       var updateResult = await supabaseClient
+         .from("mayele_history")
+         .update({
+           date: date,
+           title: title,
+           text: text
+         })
+         .eq("id", editingEventId);
+
+       if (updateResult.error) {
+         console.error(updateResult.error);
+         showToast("Erreur modification");
+         return;
        }
 
        showToast("Souvenir modifié");
      } else {
-       events.push({
-         id: "event-" + Date.now(),
-         date: date,
-         title: title,
-         text: text
-       });
+       var insertResult = await supabaseClient
+         .from("mayele_history")
+         .insert({
+           date: date,
+           title: title,
+           text: text
+         });
+
+       if (insertResult.error) {
+         console.error(insertResult.error);
+         showToast("Erreur ajout");
+         return;
+       }
 
        showToast("Souvenir ajouté");
      }
 
-     saveHistoryEvents(events);
-     renderTimeline();
+     await renderTimeline();
      closeEventForm();
      createHeart();
    }
 
-   function getPlans() {
-     return safeJSONGet("mayele_plans_v7", []);
+   async function getPlans() {
+     var result = await supabaseClient
+       .from("mayele_plans")
+       .select("id,title,category,date,place,note,done,created_at")
+       .order("date", { ascending: true, nullsFirst: false })
+       .order("created_at", { ascending: true });
+
+     if (result.error) {
+       console.error(result.error);
+       showToast("Erreur chargement envies");
+       return [];
+     }
+
+     return result.data || [];
    }
 
-   function savePlans(plans) {
-     safeJSONSet("mayele_plans_v7", plans);
-   }
-
-   function addPlan(e) {
+   async function addPlan(e) {
      e.preventDefault();
 
      var title = document.getElementById("planTitle").value.trim();
@@ -1878,28 +1913,31 @@
        return;
      }
 
-     var plans = getPlans();
+     var result = await supabaseClient
+       .from("mayele_plans")
+       .insert({
+         title: title,
+         category: category,
+         date: date || null,
+         place: place,
+         note: note,
+         done: false
+       });
 
-     plans.push({
-       id: "plan-" + Date.now(),
-       title: title,
-       category: category,
-       date: date,
-       place: place,
-       note: note,
-       done: false
-     });
+     if (result.error) {
+       console.error(result.error);
+       showToast("Erreur ajout");
+       return;
+     }
 
-     savePlans(plans);
-     renderPlans();
-
+     await renderPlans();
      document.getElementById("planForm").reset();
 
      showToast("Envie ajoutée");
      createHeart();
    }
 
-   function addRandomPlan() {
+   async function addRandomPlan() {
      var ideas = [
        {
          title: "Pique-nique quelque part à Nantes",
@@ -1928,39 +1966,43 @@
      ];
 
      var idea = ideas[Math.floor(Math.random() * ideas.length)];
-     var plans = getPlans();
 
-     plans.push({
-       id: "plan-" + Date.now(),
-       title: idea.title,
-       category: idea.category,
-       date: "",
-       place: idea.place,
-       note: idea.note,
-       done: false
-     });
+     var result = await supabaseClient
+       .from("mayele_plans")
+       .insert({
+         title: idea.title,
+         category: idea.category,
+         date: null,
+         place: idea.place,
+         note: idea.note,
+         done: false
+       });
 
-     savePlans(plans);
-     renderPlans();
+     if (result.error) {
+       console.error(result.error);
+       showToast("Erreur ajout");
+       return;
+     }
+
+     await renderPlans();
      showToast("Idée surprise ajoutée");
      createHeart();
    }
 
-   function addPlanToHistory(id) {
-     var plans = getPlans();
-     var plan = null;
+   async function addPlanToHistory(id) {
+     var planResult = await supabaseClient
+       .from("mayele_plans")
+       .select("id,title,category,date,place,note,done")
+       .eq("id", id)
+       .single();
 
-     for (var i = 0; i < plans.length; i++) {
-       if (plans[i].id === id) {
-         plan = plans[i];
-         break;
-       }
-     }
-
-     if (!plan) {
+     if (planResult.error) {
+       console.error(planResult.error);
        showToast("Envie introuvable");
        return;
      }
+
+     var plan = planResult.data;
 
      if (!plan.date) {
        showToast("Ajoute une date avant de mettre dans l’histoire");
@@ -1981,32 +2023,29 @@
        text = "Une envie prévue ensemble, ajoutée à notre histoire.";
      }
 
-     var events = getHistoryEvents();
+     var insertResult = await supabaseClient
+       .from("mayele_history")
+       .insert({
+         date: plan.date,
+         title: plan.title,
+         text: text
+       });
 
-     events.push({
-       id: "event-from-plan-" + Date.now(),
-       date: plan.date,
-       title: plan.title,
-       text: text
-     });
+     if (insertResult.error) {
+       console.error(insertResult.error);
+       showToast("Erreur ajout histoire");
+       return;
+     }
 
-     saveHistoryEvents(events);
-     renderTimeline();
+     await renderTimeline();
      showToast("Ajouté à notre histoire");
      createHeart();
    }
 
-   function renderPlans() {
+   async function renderPlans() {
      var list = document.getElementById("plannerList");
      var empty = document.getElementById("plannerEmpty");
-     var plans = getPlans();
-
-     plans.sort(function(a, b) {
-       if (!a.date && !b.date) return 0;
-       if (!a.date) return 1;
-       if (!b.date) return -1;
-       return new Date(a.date) - new Date(b.date);
-     });
+     var plans = await getPlans();
 
      list.innerHTML = "";
 
@@ -2055,43 +2094,64 @@
      var historyButtons = document.querySelectorAll("[data-history-plan]");
 
      for (var i = 0; i < toggleButtons.length; i++) {
-       toggleButtons[i].addEventListener("click", function() {
+       toggleButtons[i].addEventListener("click", async function() {
          var id = this.getAttribute("data-toggle-plan");
-         var plans = getPlans();
 
-         for (var j = 0; j < plans.length; j++) {
-           if (plans[j].id === id) {
-             plans[j].done = !plans[j].done;
-           }
+         var currentResult = await supabaseClient
+           .from("mayele_plans")
+           .select("done")
+           .eq("id", id)
+           .single();
+
+         if (currentResult.error) {
+           console.error(currentResult.error);
+           showToast("Erreur statut");
+           return;
          }
 
-         savePlans(plans);
-         renderPlans();
+         var updateResult = await supabaseClient
+           .from("mayele_plans")
+           .update({ done: !currentResult.data.done })
+           .eq("id", id);
+
+         if (updateResult.error) {
+           console.error(updateResult.error);
+           showToast("Erreur statut");
+           return;
+         }
+
+         await renderPlans();
          showToast("Statut modifié");
        });
      }
 
      for (var k = 0; k < deleteButtons.length; k++) {
-       deleteButtons[k].addEventListener("click", function() {
+       deleteButtons[k].addEventListener("click", async function() {
          var id = this.getAttribute("data-delete-plan");
 
          if (!confirm("Tu veux vraiment supprimer cette envie ?")) {
            return;
          }
 
-         var plans = getPlans().filter(function(plan) {
-           return plan.id !== id;
-         });
+         var result = await supabaseClient
+           .from("mayele_plans")
+           .delete()
+           .eq("id", id);
 
-         savePlans(plans);
-         renderPlans();
+         if (result.error) {
+           console.error(result.error);
+           showToast("Erreur suppression");
+           return;
+         }
+
+         await renderPlans();
          showToast("Envie supprimée");
        });
      }
 
      for (var l = 0; l < historyButtons.length; l++) {
-       historyButtons[l].addEventListener("click", function() {
-         addPlanToHistory(this.getAttribute("data-history-plan"));
+       historyButtons[l].addEventListener("click", async function() {
+         await addPlanToHistory(this.getAttribute("data-history-plan"));
        });
      }
    }
@@ -2350,8 +2410,6 @@
        createHeart();
      });
 
-     renderTimeline();
-     renderPlans();
      updateQuestion();
      checkAccess();
 
